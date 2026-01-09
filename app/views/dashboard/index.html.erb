@@ -70,42 +70,120 @@
 
 <div class="card">
   <h2>Gráficos</h2>
-  <div id="charts-container" style="display: flex; flex-direction: column; gap: 2rem;">
+  <div id="charts-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
     <div>
-      <canvas id="topPlayersChart" style="max-height: 300px;"></canvas>
+      <canvas id="topPlayersChart"></canvas>
     </div>
     <div>
-      <canvas id="deathsTimelineChart" style="max-height: 300px;"></canvas>
+      <canvas id="deathsTimelineChart"></canvas>
+    </div>
+    <div>
+      <canvas id="pointsDistributionChart"></canvas>
+    </div>
+    <div>
+      <canvas id="deadliestCelebritiesChart"></canvas>
+    </div>
+    <div>
+      <canvas id="pointsVsPopularityChart"></canvas>
+    </div>
+    <div>
+      <canvas id="ageDistributionChart"></canvas>
     </div>
   </div>
 </div>
 
 <script>
   // Top 10 Players Chart
-  window.topPlayersData = {
-    labels: <%= raw @users.first(10).map { |u| u[:user].email }.to_json %>,
+  window.topPlayersData = <%= raw({
+    labels: @users.first(10).map { |u| u[:user].email },
     datasets: [{
       label: 'Pontuação',
-      data: <%= raw @users.first(10).map { |u| u[:total_points] }.to_json %>,
+      data: @users.first(10).map { |u| u[:total_points] },
       backgroundColor: 'rgba(102, 126, 234, 0.7)',
       borderColor: 'rgba(118, 75, 162, 1)',
       borderWidth: 2,
       borderRadius: 8
     }]
-  };
+  }.to_json) %>;
 
-  // Deaths Timeline Chart
-  window.deathsTimelineData = {
-    labels: <%= raw @deaths_by_month.keys.to_json %>,
+  // Deaths Timeline Chart (Cumulative)
+  window.deathsTimelineData = <%= raw({
+    labels: @deaths_by_month.keys,
     datasets: [{
-      label: 'Mortes por Mês',
-      data: <%= raw @deaths_by_month.values.to_json %>,
+      label: 'Mortes Acumuladas',
+      data: @deaths_by_month.values,
       backgroundColor: 'rgba(102, 126, 234, 0.3)',
       borderColor: 'rgba(118, 75, 162, 1)',
       borderWidth: 3,
       fill: true,
-      tension: 0.4
+      tension: 0.4,
+      pointRadius: 5,
+      pointHoverRadius: 7
     }]
-  };
+  }.to_json) %>;
+
+  // Points Distribution Chart
+  window.pointsDistributionData = <%= raw({
+    labels: @points_distribution.keys,
+    datasets: [{
+      label: 'Jogadores',
+      data: @points_distribution.values,
+      backgroundColor: [
+        'rgba(231, 76, 60, 0.8)',
+        'rgba(241, 196, 15, 0.8)',
+        'rgba(46, 204, 113, 0.8)',
+        'rgba(52, 152, 219, 0.8)',
+        'rgba(155, 89, 182, 0.8)'
+      ],
+      borderColor: [
+        'rgba(231, 76, 60, 1)',
+        'rgba(241, 196, 15, 1)',
+        'rgba(46, 204, 113, 1)',
+        'rgba(52, 152, 219, 1)',
+        'rgba(155, 89, 182, 1)'
+      ],
+      borderWidth: 2
+    }]
+  }.to_json) %>;
+
+  // Deadliest Celebrities Chart
+  window.deadliestCelebritiesData = <%= raw({
+    labels: @deadliest_celebrities.map { |c| c[:name] },
+    datasets: [{
+      label: 'Pontos',
+      data: @deadliest_celebrities.map { |c| c[:points] },
+      backgroundColor: 'rgba(231, 76, 60, 0.8)',
+      borderColor: 'rgba(231, 76, 60, 1)',
+      borderWidth: 2
+    }]
+  }.to_json) %>;
+
+  // Points vs Popularity Chart
+  window.pointsVsPopularityData = <%= raw({
+    datasets: [{
+      label: 'Pontos vs Popularidade',
+      data: @points_vs_popularity.map { |d| { x: d[:x], y: d[:y] } },
+      backgroundColor: 'rgba(102, 126, 234, 0.6)',
+      borderColor: 'rgba(118, 75, 162, 1)',
+      borderWidth: 2,
+      pointRadius: 6,
+      pointHoverRadius: 8
+    }]
+  }.to_json) %>;
+  
+  // Store labels for tooltip
+  window.pointsVsPopularityLabels = <%= raw(@points_vs_popularity.map { |d| d[:label] }.to_json) %>;
+
+  // Age Distribution Chart
+  window.ageDistributionData = <%= raw({
+    labels: @age_distribution.keys,
+    datasets: [{
+      label: 'Mortes',
+      data: @age_distribution.values,
+      backgroundColor: 'rgba(52, 152, 219, 0.8)',
+      borderColor: 'rgba(52, 152, 219, 1)',
+      borderWidth: 2
+    }]
+  }.to_json) %>;
 </script>
 
