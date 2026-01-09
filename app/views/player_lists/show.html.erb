@@ -3,7 +3,8 @@
 <div class="card">
   <h2>Celebridades (<%= @player_lists.count %>)</h2>
   <% if @player_lists.any? %>
-    <table>
+    <div class="table-wrapper">
+      <table>
       <thead>
         <tr>
           <th>Posição</th>
@@ -35,6 +36,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   <% else %>
     <p>Esta lista está vazia.</p>
   <% end %>

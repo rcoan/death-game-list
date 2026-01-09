@@ -1,8 +1,8 @@
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+<div class="dashboard-header">
   <h1>Dashboard - Ranking Geral</h1>
-  <div>
-    <label for="year-select" style="color: white; margin-right: 0.5rem;">Ano:</label>
-    <select id="year-select" onchange="changeYear(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 2px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.9); font-size: 1rem; cursor: pointer;">
+  <div class="year-filter">
+    <label for="year-select">Ano:</label>
+    <select id="year-select" onchange="changeYear(this.value)">
       <% @available_years.each do |year| %>
         <option value="<%= year %>" <%= 'selected' if year == @current_year %>><%= year %></option>
       <% end %>
@@ -18,7 +18,8 @@
 
 <div class="card">
   <h2>Ranking de Pontuação</h2>
-  <table>
+  <div class="table-wrapper">
+    <table>
     <thead>
       <tr>
         <th>Posição</th>
@@ -38,12 +39,14 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 </div>
 
 <div class="card">
   <h2>Todas as Mortes</h2>
   <% if @all_deaths.any? %>
-    <table>
+    <div class="table-wrapper">
+      <table>
       <thead>
         <tr>
           <th>Nome</th>
@@ -63,6 +66,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   <% else %>
     <p>Nenhuma morte registrada ainda.</p>
   <% end %>

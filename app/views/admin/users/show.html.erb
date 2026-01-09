@@ -11,7 +11,8 @@
 <div class="card">
   <h2>Lista de Celebridades</h2>
   <% if @player_lists.any? %>
-    <table>
+    <div class="table-wrapper">
+      <table>
       <thead>
         <tr>
           <th>Posição</th>
@@ -43,6 +44,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   <% else %>
     <p>Lista vazia.</p>
   <% end %>

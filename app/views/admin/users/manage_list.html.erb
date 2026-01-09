@@ -15,7 +15,8 @@
 <div class="card">
   <h2>Lista (<%= @player_lists.count %>/20)</h2>
   <% if @player_lists.any? %>
-    <table>
+    <div class="table-wrapper">
+      <table>
       <thead>
         <tr>
           <th>Posição</th>
@@ -52,6 +53,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   <% else %>
     <p>Lista vazia. Adicione celebridades acima!</p>
   <% end %>
