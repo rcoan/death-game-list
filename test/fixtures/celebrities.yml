@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  age_at_death: 1
+  death_date: 2026-01-09
+  points: 1
+  is_deceased: false
+
+two:
+  name: MyString
+  age_at_death: 1
+  death_date: 2026-01-09
+  points: 1
+  is_deceased: false

@@ -1,0 +1,88 @@
+<h1>Dashboard - Ranking Geral</h1>
+
+<div class="card">
+  <h2>Ranking de Pontuação</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Posição</th>
+        <th>Jogador</th>
+        <th>Pontuação Total</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each_with_index do |user_data, index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= user_data[:user].email %></td>
+          <td class="points"><%= user_data[:total_points] %> pontos</td>
+          <td><%= link_to "Ver Lista", player_list_path(user_data[:user].id), class: "btn" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Mortes Recentes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Idade</th>
+        <th>Pontos</th>
+        <th>Data da Morte</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent_deaths.each do |celebrity| %>
+        <tr>
+          <td><%= celebrity.name %></td>
+          <td><%= celebrity.age_at_death %> anos</td>
+          <td class="points"><%= celebrity.points %> pontos</td>
+          <td><%= celebrity.death_date&.strftime("%d/%m/%Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Gráficos</h2>
+  <div id="charts-container" style="display: flex; flex-direction: column; gap: 2rem;">
+    <div>
+      <canvas id="topPlayersChart" style="max-height: 300px;"></canvas>
+    </div>
+    <div>
+      <canvas id="deathsTimelineChart" style="max-height: 300px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Top 10 Players Chart
+  window.topPlayersData = {
+    labels: <%= raw @users.first(10).map { |u| u[:user].email }.to_json %>,
+    datasets: [{
+      label: 'Pontuação',
+      data: <%= raw @users.first(10).map { |u| u[:total_points] }.to_json %>,
+      backgroundColor: 'rgba(52, 152, 219, 0.6)',
+      borderColor: 'rgba(52, 152, 219, 1)',
+      borderWidth: 1
+    }]
+  };
+
+  // Deaths Timeline Chart
+  window.deathsTimelineData = {
+    labels: <%= raw @deaths_by_month.keys.to_json %>,
+    datasets: [{
+      label: 'Mortes por Mês',
+      data: <%= raw @deaths_by_month.values.to_json %>,
+      backgroundColor: 'rgba(231, 76, 60, 0.6)',
+      borderColor: 'rgba(231, 76, 60, 1)',
+      borderWidth: 1
+    }]
+  };
+</script>
+

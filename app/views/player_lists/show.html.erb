@@ -1,0 +1,44 @@
+<h1>Lista de <%= @user.email %></h1>
+
+<div class="card">
+  <h2>Celebridades (<%= @player_lists.count %>)</h2>
+  <% if @player_lists.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Posição</th>
+          <th>Nome</th>
+          <th>Status</th>
+          <th>Pontos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @player_lists.each do |player_list| %>
+          <tr>
+            <td><%= player_list.position %></td>
+            <td><%= player_list.celebrity.name %></td>
+            <td>
+              <% if player_list.celebrity.is_deceased? %>
+                <span class="deceased">Morto</span>
+              <% else %>
+                <span>Vivo</span>
+              <% end %>
+            </td>
+            <td>
+              <% if player_list.celebrity.is_deceased? %>
+                <span class="points"><%= player_list.celebrity.points %> pontos</span>
+              <% else %>
+                -
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>Esta lista está vazia.</p>
+  <% end %>
+</div>
+
+<%= link_to "Voltar ao Dashboard", root_path, class: "btn" %>
+

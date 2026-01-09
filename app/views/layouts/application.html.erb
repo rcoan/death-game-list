@@ -23,6 +23,35 @@
   </head>
 
   <body>
-    <%= yield %>
+    <nav>
+      <div class="nav-container">
+        <h1><%= link_to "Jogo do Morte", root_path %></h1>
+        <div class="nav-links">
+          <% if user_signed_in? %>
+            <%= link_to "Dashboard", root_path %>
+            <%= link_to "Minha Lista", player_lists_path %>
+            <% if current_user.admin? %>
+              <%= link_to "Admin - Celebridades", celebrities_path %>
+              <%= link_to "Admin - Usuários", admin_users_path %>
+            <% end %>
+            <%= link_to "Sair", destroy_user_session_path, data: { turbo_method: :delete } %>
+          <% else %>
+            <%= link_to "Entrar", new_user_session_path %>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
+    <% if notice %>
+      <p class="notice"><%= notice %></p>
+    <% end %>
+
+    <% if alert %>
+      <p class="alert"><%= alert %></p>
+    <% end %>
+
+    <main>
+      <%= yield %>
+    </main>
   </body>
 </html>

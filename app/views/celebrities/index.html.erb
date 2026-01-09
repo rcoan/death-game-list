@@ -1,0 +1,85 @@
+<h1>Admin - Gerenciar Celebridades</h1>
+
+<div class="card">
+  <h2>Todas as Celebridades</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Status</th>
+        <th>Idade</th>
+        <th>Pontos</th>
+        <th>Data da Morte</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @celebrities.each do |celebrity| %>
+        <tr>
+          <td><%= celebrity.name %></td>
+          <td>
+            <% if celebrity.is_deceased? %>
+              <span class="deceased">Morto</span>
+            <% else %>
+              <span>Vivo</span>
+            <% end %>
+          </td>
+          <td><%= celebrity.age_at_death || "-" %></td>
+          <td>
+            <% if celebrity.points %>
+              <span class="points"><%= celebrity.points %> pontos</span>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td><%= celebrity.death_date&.strftime("%d/%m/%Y") || "-" %></td>
+          <td>
+            <% unless celebrity.is_deceased? %>
+              <%= link_to "Marcar como Morto", mark_deceased_celebrity_path(celebrity), class: "btn btn-danger" %>
+            <% end %>
+            <%= link_to "Mesclar", "#", class: "btn", onclick: "showMergeForm(#{celebrity.id}); return false;" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div id="merge-form" style="display: none;" class="card">
+  <h2>Mesclar Celebridades</h2>
+  <%= form_with url: merge_celebrity_path(id: 0), method: :post, local: true do |f| %>
+    <input type="hidden" id="source_id" name="source_id">
+    <div class="form-group">
+      <label>Celebridade Origem (será deletada)</label>
+      <input type="text" id="source_name" readonly>
+    </div>
+    <div class="form-group">
+      <label for="target_id">Celebridade Destino (manterá os dados)</label>
+      <select name="target_id" id="target_id" required>
+        <option value="">Selecione...</option>
+        <% @celebrities.each do |c| %>
+          <option value="<%= c.id %>"><%= c.name %></option>
+        <% end %>
+      </select>
+    </div>
+    <%= f.submit "Mesclar", class: "btn btn-danger", data: { confirm: "Tem certeza? A celebridade origem será deletada e todas as listas serão transferidas." } %>
+    <button type="button" class="btn" onclick="hideMergeForm()">Cancelar</button>
+  <% end %>
+</div>
+
+<script>
+  function showMergeForm(sourceId) {
+    const celebrity = <%= raw @celebrities.map { |c| { id: c.id, name: c.name } }.to_json %>;
+    const source = celebrity.find(c => c.id === sourceId);
+    
+    document.getElementById('source_id').value = sourceId;
+    document.getElementById('source_name').value = source.name;
+    document.getElementById('merge-form').style.display = 'block';
+    document.getElementById('merge-form').querySelector('form').action = '/celebrities/' + sourceId + '/merge';
+  }
+
+  function hideMergeForm() {
+    document.getElementById('merge-form').style.display = 'none';
+  }
+</script>
+

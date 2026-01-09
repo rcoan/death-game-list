@@ -1,0 +1,21 @@
+<h1>Marcar como Morto: <%= @celebrity.name %></h1>
+
+<div class="card">
+  <%= form_with url: update_deceased_celebrity_path(@celebrity), method: :patch, local: true do |f| %>
+    <div class="form-group">
+      <label for="age_at_death">Idade ao Morrer</label>
+      <input type="number" name="celebrity[age_at_death]" id="age_at_death" min="0" max="100" required class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label for="death_date">Data da Morte</label>
+      <input type="date" name="celebrity[death_date]" id="death_date" required class="form-control">
+    </div>
+
+    <%= f.submit "Marcar como Morto", class: "btn btn-danger" %>
+    <%= link_to "Cancelar", celebrities_path, class: "btn" %>
+  <% end %>
+</div>
+
+<p><strong>Nota:</strong> Os pontos serão calculados automaticamente como 100 - idade.</p>
+
