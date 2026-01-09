@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_09_124025) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_09_155523) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,15 +25,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_09_124025) do
     t.index ["name"], name: "index_celebrities_on_name", unique: true
   end
 
+  create_table "game_years", force: :cascade do |t|
+    t.integer "year", null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["year"], name: "index_game_years_on_year", unique: true
+  end
+
   create_table "player_lists", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "celebrity_id", null: false
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "year", default: 2026, null: false
     t.index ["celebrity_id"], name: "index_player_lists_on_celebrity_id"
-    t.index ["user_id", "celebrity_id"], name: "index_player_lists_on_user_id_and_celebrity_id", unique: true
-    t.index ["user_id", "position"], name: "index_player_lists_on_user_id_and_position", unique: true
+    t.index ["user_id", "year", "celebrity_id"], name: "index_player_lists_on_user_id_and_year_and_celebrity_id", unique: true
+    t.index ["user_id", "year", "position"], name: "index_player_lists_on_user_id_and_year_and_position", unique: true
     t.index ["user_id"], name: "index_player_lists_on_user_id"
   end
 
@@ -48,6 +57,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_09_124025) do
     t.boolean "admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "years", force: :cascade do |t|
+    t.integer "value", null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["value"], name: "index_years_on_value", unique: true
   end
 
   add_foreign_key "player_lists", "celebrities"

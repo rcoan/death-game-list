@@ -7,8 +7,9 @@ class User < ApplicationRecord
   has_many :player_lists, dependent: :destroy
   has_many :celebrities, through: :player_lists
 
-  def total_points
-    player_lists.joins(:celebrity)
+  def total_points(year = Date.current.year)
+    player_lists.for_year(year)
+                .joins(:celebrity)
                 .where(celebrities: { is_deceased: true })
                 .sum("celebrities.points")
   end

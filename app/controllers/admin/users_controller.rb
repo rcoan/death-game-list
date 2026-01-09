@@ -8,7 +8,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def show
-    @player_lists = @user.player_lists.includes(:celebrity).order(:position)
+    @player_lists = @user.player_lists.for_year(@current_year).includes(:celebrity).order(:position)
   end
 
   def new
@@ -51,18 +51,19 @@ class Admin::UsersController < ApplicationController
   end
 
   def manage_list
-    @player_lists = @user.player_lists.includes(:celebrity).order(:position)
+    @player_lists = @user.player_lists.for_year(@current_year).includes(:celebrity).order(:position)
   end
 
   def add_celebrity_to_list
     @user = User.find(params[:id])
     celebrity = Celebrity.find_or_create_by(name: params[:celebrity_name])
     
-    next_position = @user.player_lists.maximum(:position).to_i + 1
+    next_position = @user.player_lists.for_year(@current_year).maximum(:position).to_i + 1
     
     @player_list = @user.player_lists.build(
       celebrity: celebrity,
-      position: next_position
+      position: next_position,
+      year: @current_year
     )
 
     if @player_list.save

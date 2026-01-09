@@ -1,4 +1,27 @@
 class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
+
+  before_action :set_current_year
+
+  private
+
+  def set_current_year
+    if params[:year].present?
+      year = params[:year].to_i
+      # Validar se o ano existe e está ativo
+      if GameYear.active.exists?(year: year)
+        session[:selected_year] = year
+      end
+    end
+    
+    # Se não tem ano na sessão, usar o ano mais recente ativo (2026 por padrão)
+    if session[:selected_year].nil?
+      default_year = GameYear.active.ordered.first&.year || 2026
+      session[:selected_year] = default_year
+    end
+    
+    @current_year = session[:selected_year] || 2026
+    @available_years = GameYear.active.ordered.pluck(:year)
+  end
 end

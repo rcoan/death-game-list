@@ -27,5 +27,6 @@ Rails.application.routes.draw do
         delete :remove_from_list
       end
     end
+    resources :game_years
   end
 end

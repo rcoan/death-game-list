@@ -1,0 +1,40 @@
+<h1>Admin - Gerenciar Anos</h1>
+
+<div class="card">
+  <%= link_to "Criar Novo Ano", new_admin_game_year_path, class: "btn btn-success" %>
+</div>
+
+<div class="card">
+  <h2>Todos os Anos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Ano</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @game_years.each do |game_year| %>
+        <tr>
+          <td><%= game_year.year %></td>
+          <td>
+            <% if game_year.is_active? %>
+              <span class="points">Ativo</span>
+            <% else %>
+              <span class="deceased">Inativo</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to "Editar", edit_admin_game_year_path(game_year), class: "btn" %>
+            <%= link_to "Deletar", admin_game_year_path(game_year), method: :delete, 
+                data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= link_to "Voltar", root_path, class: "btn" %>
+

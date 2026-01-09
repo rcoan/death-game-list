@@ -1,4 +1,20 @@
-<h1>Dashboard - Ranking Geral</h1>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <h1>Dashboard - Ranking Geral</h1>
+  <div>
+    <label for="year-select" style="color: white; margin-right: 0.5rem;">Ano:</label>
+    <select id="year-select" onchange="changeYear(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 2px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.9); font-size: 1rem; cursor: pointer;">
+      <% @available_years.each do |year| %>
+        <option value="<%= year %>" <%= 'selected' if year == @current_year %>><%= year %></option>
+      <% end %>
+    </select>
+  </div>
+</div>
+
+<script>
+  function changeYear(year) {
+    window.location.href = '<%= root_path %>?year=' + year;
+  }
+</script>
 
 <div class="card">
   <h2>Ranking de Pontuação</h2>
@@ -25,27 +41,31 @@
 </div>
 
 <div class="card">
-  <h2>Mortes Recentes</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Idade</th>
-        <th>Pontos</th>
-        <th>Data da Morte</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @recent_deaths.each do |celebrity| %>
+  <h2>Todas as Mortes</h2>
+  <% if @all_deaths.any? %>
+    <table>
+      <thead>
         <tr>
-          <td><%= celebrity.name %></td>
-          <td><%= celebrity.age_at_death %> anos</td>
-          <td class="points"><%= celebrity.points %> pontos</td>
-          <td><%= celebrity.death_date&.strftime("%d/%m/%Y") %></td>
+          <th>Nome</th>
+          <th>Idade</th>
+          <th>Pontos</th>
+          <th>Data da Morte</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @all_deaths.each do |celebrity| %>
+          <tr>
+            <td><%= celebrity.name %></td>
+            <td><%= celebrity.age_at_death %> anos</td>
+            <td class="points"><%= celebrity.points %> pontos</td>
+            <td><%= celebrity.death_date&.strftime("%d/%m/%Y") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>Nenhuma morte registrada ainda.</p>
+  <% end %>
 </div>
 
 <div class="card">

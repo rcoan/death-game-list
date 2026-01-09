@@ -33,6 +33,7 @@
             <% if current_user.admin? %>
               <%= link_to "Admin - Celebridades", celebrities_path %>
               <%= link_to "Admin - Usuários", admin_users_path %>
+              <%= link_to "Admin - Anos", admin_game_years_path %>
             <% end %>
             <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn-link", form: { style: "display: inline;" } %>
           <% else %>

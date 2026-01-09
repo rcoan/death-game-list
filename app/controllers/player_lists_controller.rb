@@ -1,24 +1,26 @@
 class PlayerListsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_player_list, only: [:destroy]
+  before_action :set_year
 
   def index
-    @player_lists = current_user.player_lists.includes(:celebrity).order(:position)
+    @player_lists = current_user.player_lists.for_year(@year).includes(:celebrity).order(:position)
   end
 
   def show
     @user = User.find(params[:id])
-    @player_lists = @user.player_lists.includes(:celebrity).order(:position)
+    @player_lists = @user.player_lists.for_year(@year).includes(:celebrity).order(:position)
   end
 
   def create
     celebrity = Celebrity.find_or_create_by(name: params[:celebrity_name])
     
-    next_position = current_user.player_lists.maximum(:position).to_i + 1
+    next_position = current_user.player_lists.for_year(@year).maximum(:position).to_i + 1
     
     @player_list = current_user.player_lists.build(
       celebrity: celebrity,
-      position: next_position
+      position: next_position,
+      year: @year
     )
 
     if @player_list.save
@@ -26,6 +28,12 @@ class PlayerListsController < ApplicationController
     else
       redirect_to player_lists_path, alert: @player_list.errors.full_messages.join(", ")
     end
+  end
+
+  private
+
+  def set_year
+    @year = params[:year]&.to_i || Date.current.year
   end
 
   def destroy
