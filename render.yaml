@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: deaths-game
+    env: ruby
+    plan: starter
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: SECRET_KEY_BASE
+        generateValue: true
+    healthCheckPath: /up
+
+databases:
+  - name: deaths-game-db
+    plan: starter
+    databaseName: deaths_game_production
+    user: deaths_game
+

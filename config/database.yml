@@ -65,20 +65,15 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: deaths_game_production
-    username: deaths_game
-    password: <%= ENV["DEATHS_GAME_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: deaths_game_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: deaths_game_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: deaths_game_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  # Render PostgreSQL provides DATABASE_URL automatically
+  # Rails will use DATABASE_URL if present, otherwise use the config below
+  url: <%= ENV["DATABASE_URL"] %>
+  # Fallback config if DATABASE_URL is not set (for local testing)
+  <% unless ENV["DATABASE_URL"] %>
+  database: <%= ENV.fetch("DEATHS_GAME_DATABASE_NAME") { "deaths_game_production" } %>
+  username: <%= ENV.fetch("DEATHS_GAME_DATABASE_USER") { "deaths_game" } %>
+  password: <%= ENV.fetch("DEATHS_GAME_DATABASE_PASSWORD") { "" } %>
+  host: <%= ENV.fetch("DEATHS_GAME_DATABASE_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("DEATHS_GAME_DATABASE_PORT") { "5432" } %>
+  <% end %>
