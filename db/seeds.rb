@@ -1,8 +1,18 @@
-# Clear existing data
-PlayerList.destroy_all
-Celebrity.destroy_all
-User.destroy_all
-GameYear.destroy_all
+# Skip seeding in production if 2025 data already exists
+if Rails.env.production?
+  if PlayerList.where(year: 2025).exists?
+    puts "2025 data already exists in production. Skipping seeds."
+    exit
+  end
+end
+
+# Only clear data in development
+if Rails.env.development?
+  PlayerList.destroy_all
+  Celebrity.destroy_all
+  User.destroy_all
+  GameYear.destroy_all
+end
 
 # Criar anos padrão
 GameYear.find_or_create_by(year: 2025) do |gy|
@@ -29,10 +39,18 @@ all_deaths = {
   "Papa Francisco" => { age: 76, date: "2025-04-15", points: 24 }
 }
 
+# Helper to generate username from name
+def generate_username(name)
+  name.downcase
+     .gsub(/[^a-z0-9]/, '_')
+     .gsub(/_+/, '_')
+     .gsub(/^_|_$/, '')
+end
+
 # Criar usuários/jogadores
 players_data = {
   "Angela" => {
-    email: "angela@example.com",
+    username: "angela",
     list: [
       "Fuad Noman", "Tony Tornado", "Preta Gil", "Edgar Vivar", "Mama Bruschetta",
       "Ringo Starr", "Warren Beatty", "George W. Bush", "Laura Cardoso", "Milton Nascimento",
@@ -43,7 +61,7 @@ players_data = {
     total_points: 84
   },
   "Ricardo (Coveiro)" => {
-    email: "ricardo@example.com",
+    username: "ricardo_coveiro",
     list: [
       "Michael Schumacker", "Boris Casoy", "Isabel Veloso", "Faustão", "José Mujica",
       "Claudia Rodrigues", "Marcos Oliveira", "Tony Tornado", "Datena", "Carlos Alberto",
@@ -54,7 +72,7 @@ players_data = {
     total_points: 61
   },
   "RAUL (ex-Coveiro)" => {
-    email: "raul@example.com",
+    username: "raul_ex_coveiro",
     list: [
       "Carlos Alberto", "M Schumacker", "Tom Cruise", "Bruce Willis", "Bonner",
       "Didi", "Lima Duarte", "Bruno do Marrone", "Preta Gil", "Raul Gil",
@@ -66,7 +84,7 @@ players_data = {
     admin: true
   },
   "Luan viado" => {
-    email: "luan@example.com",
+    username: "luan_viado",
     list: [
       "Fernanda Montenegro", "Faustão", "Lima Duarte", "Tony Tornando", "Ary Fontura",
       "Nathalia Tiberge", "Laura Cardoso", "José Sarney", "Lula", "FHC",
@@ -77,7 +95,7 @@ players_data = {
     total_points: 59
   },
   "WILL" => {
-    email: "will@example.com",
+    username: "will",
     list: [
       "Faustão", "Volodymyr Zelensky", "Sarney", "Monark", "Alek do Zoio",
       "Pepe Mijica", "Gilberto Gil", "Schumacher", "Fuad Noman", "FHC",
@@ -89,7 +107,7 @@ players_data = {
     admin: true
   },
   "BOZSA" => {
-    email: "bozsa@example.com",
+    username: "bozsa",
     list: [
       "Lima Duarte", "Laura Cardoso", "Ary Fontoura", "Joan Plowright", "Preta Gil",
       "Ian Smith", "Claudia Rodrigues", "Francisco Cuoco", "Fernanda Montenegro", "Nathalia Timberg",
@@ -100,7 +118,7 @@ players_data = {
     total_points: 63
   },
   "RAY" => {
-    email: "ray@example.com",
+    username: "ray",
     list: [
       "Roberto Carlos", "Renan Calheiras", "Carlos Alberto", "Ozzy Osbourne", "Monark",
       "Preta Gil", "Lima Duarte", "Stenio Garcia", "Keith Richards", "Fernanda Montenegro",
@@ -111,7 +129,7 @@ players_data = {
     total_points: 74
   },
   "Bruno bizarro" => {
-    email: "bruno@example.com",
+    username: "bruno_bizarro",
     list: [
       "Lula", "Bruce Willis", "Fernanda Montenegro", "Barbara Streisand", "Mick Jagger",
       "Faustão", "Toguro", "Bolsonaro", "Michael J Fox", "Christopher Lloyd",
@@ -122,7 +140,7 @@ players_data = {
     total_points: 59
   },
   "Felipe" => {
-    email: "felipe@example.com",
+    username: "felipe",
     list: [
       "Renato Aragão", "Felipe Castanhari", "Laura Cardoso", "Lima Duarte", "Ary Fontura",
       "Preta Gil", "Gilberto Gil", "Nicolas Cage", "Paul McCartney", "Lula",
@@ -133,7 +151,7 @@ players_data = {
     total_points: 50
   },
   "Pixote" => {
-    email: "pixote@example.com",
+    username: "pixote",
     list: [
       "Lula", "Suzana Vieira", "Preta Gil", "Faustão", "Simony",
       "Mauricio Kubrosly", "Fernanda Montenegro", "Bruce Willis", "Laura Cardoso", "Thais Carla",
@@ -144,7 +162,7 @@ players_data = {
     total_points: 50
   },
   "Ray satanista" => {
-    email: "raysatanista@example.com",
+    username: "ray_satanista",
     list: [
       "Raul Gil", "Lula", "Gloria Menezes", "Tony Ramos", "Lima Duarte",
       "Moon Taeil", "P Diddy", "JK Rowling", "Jim Carrey", "Faustão",
@@ -155,7 +173,7 @@ players_data = {
     total_points: 50
   },
   "Lucas aleatório" => {
-    email: "lucas@example.com",
+    username: "lucas_aleatorio",
     list: [
       "P Diddy", "Jackie Chan", "Putin", "Biden", "Papa Francisco",
       "Aécio Neves", "Trump", "Arthur do Val", "Silas Malafaia", "RR Soares",
@@ -179,7 +197,8 @@ end
 
 # Criar usuários e suas listas
 players_data.each do |name, data|
-  user = User.find_or_create_by(email: data[:email]) do |u|
+  username = data[:username] || generate_username(name)
+  user = User.find_or_create_by(username: username) do |u|
     u.password = "password123"
     u.password_confirmation = "password123"
     u.admin = data[:admin] || false
@@ -217,9 +236,9 @@ players_data.each do |name, data|
   end
 
   admin_status = user.admin? ? " (ADMIN)" : ""
-  puts "Created user: #{name} (#{data[:email]})#{admin_status} with #{data[:list].count} celebrities, #{data[:total_points]} points"
+  puts "Created user: #{name} (#{username})#{admin_status} with #{data[:list].count} celebrities, #{data[:total_points]} points"
 end
 
 puts "\nSeed completed! Created #{User.count} users, #{Celebrity.count} celebrities, #{PlayerList.count} player lists for year #{year_2025}"
 puts "Total deaths: #{Celebrity.where(is_deceased: true).count}"
-puts "Admin users: #{User.where(admin: true).pluck(:email).join(', ')}"
+puts "Admin users: #{User.where(admin: true).pluck(:username).join(', ')}"
