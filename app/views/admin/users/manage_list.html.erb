@@ -2,14 +2,16 @@
 
 <div class="card">
   <h2>Adicionar Celebridade</h2>
-  <%= form_with url: add_celebrity_to_list_admin_user_path(@user), method: :post, local: true, class: "autocomplete-container" do |f| %>
-    <div class="form-group">
-      <label for="celebrity_name">Nome da Celebridade</label>
-      <input type="text" id="celebrity_name" name="celebrity_name" autocomplete="off" required>
-      <div class="autocomplete-results" id="autocomplete-results"></div>
-    </div>
-    <%= f.submit "Adicionar", class: "btn btn-success" %>
-  <% end %>
+  <div class="autocomplete-container">
+    <%= form_with url: add_celebrity_to_list_admin_user_path(@user), method: :post, local: true do |f| %>
+      <div class="form-group">
+        <label for="celebrity_name">Nome da Celebridade</label>
+        <input type="text" id="celebrity_name" name="celebrity_name" autocomplete="off" required>
+      </div>
+      <%= f.submit "Adicionar", class: "btn btn-success" %>
+    <% end %>
+    <div class="autocomplete-results" id="autocomplete-results"></div>
+  </div>
 </div>
 
 <div class="card">
@@ -64,6 +66,50 @@
 <script>
   const celebrityInput = document.getElementById('celebrity_name');
   const resultsDiv = document.getElementById('autocomplete-results');
+  const autocompleteContainer = document.querySelector('.autocomplete-container');
+  let originalParent = null;
+  let originalNextSibling = null;
+
+  function moveAutocompleteOut() {
+    if (resultsDiv && resultsDiv.classList.contains('active') && resultsDiv.parentNode === autocompleteContainer) {
+      originalParent = autocompleteContainer;
+      originalNextSibling = autocompleteContainer.nextSibling;
+      document.body.appendChild(resultsDiv);
+      
+      const inputRect = celebrityInput.getBoundingClientRect();
+      resultsDiv.style.position = 'fixed';
+      resultsDiv.style.top = (inputRect.bottom + 4) + 'px';
+      resultsDiv.style.left = inputRect.left + 'px';
+      resultsDiv.style.width = inputRect.width + 'px';
+      resultsDiv.style.zIndex = '10000';
+    }
+  }
+
+  function moveAutocompleteBack() {
+    if (originalParent && resultsDiv && resultsDiv.parentNode === document.body) {
+      if (originalNextSibling) {
+        originalParent.insertBefore(resultsDiv, originalNextSibling);
+      } else {
+        originalParent.appendChild(resultsDiv);
+      }
+      resultsDiv.style.position = '';
+      resultsDiv.style.top = '';
+      resultsDiv.style.left = '';
+      resultsDiv.style.width = '';
+      resultsDiv.style.zIndex = '';
+      originalParent = null;
+      originalNextSibling = null;
+    }
+  }
+
+  function positionAutocomplete() {
+    if (resultsDiv && resultsDiv.classList.contains('active') && celebrityInput && resultsDiv.parentNode === document.body) {
+      const inputRect = celebrityInput.getBoundingClientRect();
+      resultsDiv.style.top = (inputRect.bottom + 4) + 'px';
+      resultsDiv.style.left = inputRect.left + 'px';
+      resultsDiv.style.width = inputRect.width + 'px';
+    }
+  }
 
   if (celebrityInput && resultsDiv) {
     celebrityInput.addEventListener('input', function() {
@@ -71,6 +117,7 @@
       
       if (query.length < 2) {
         resultsDiv.classList.remove('active');
+        moveAutocompleteBack();
         return;
       }
 
@@ -83,16 +130,19 @@
             data.forEach(item => {
               const div = document.createElement('div');
               div.className = 'autocomplete-item';
-              div.textContent = item.name + ' (já existe)';
+              div.textContent = item.name;
               div.addEventListener('click', () => {
                 celebrityInput.value = item.name;
                 resultsDiv.classList.remove('active');
+                moveAutocompleteBack();
               });
               resultsDiv.appendChild(div);
             });
             resultsDiv.classList.add('active');
+            setTimeout(moveAutocompleteOut, 0);
           } else {
             resultsDiv.classList.remove('active');
+            moveAutocompleteBack();
           }
         })
         .catch(error => {
@@ -100,9 +150,13 @@
         });
     });
 
+    window.addEventListener('scroll', positionAutocomplete);
+    window.addEventListener('resize', positionAutocomplete);
+
     document.addEventListener('click', function(e) {
       if (!celebrityInput.contains(e.target) && !resultsDiv.contains(e.target)) {
         resultsDiv.classList.remove('active');
+        moveAutocompleteBack();
       }
     });
   }

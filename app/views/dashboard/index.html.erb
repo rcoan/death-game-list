@@ -38,7 +38,7 @@
       <% @users.each_with_index do |user_data, index| %>
         <tr>
           <td><%= index + 1 %></td>
-          <td><%= user_data[:user].email %></td>
+          <td><%= user_data[:user].username %></td>
           <td class="points"><%= user_data[:total_points] %> pontos</td>
           <td><%= link_to "Ver Lista", player_list_path(user_data[:user].id, year: @current_year), class: "btn" %></td>
         </tr>
@@ -105,7 +105,7 @@
 <script>
   // Top 10 Players Chart
   window.topPlayersData = <%= raw({
-    labels: @users.first(10).map { |u| u[:user].email },
+    labels: @users.first(10).map { |u| u[:user].username },
     datasets: [{
       label: 'Pontuação',
       data: @users.first(10).map { |u| u[:total_points] },

@@ -4,7 +4,7 @@ class CelebritiesController < ApplicationController
   before_action :set_celebrity, only: [:show, :edit, :update, :mark_deceased]
 
   def index
-    @celebrities = Celebrity.order(:name)
+    @celebrities = Celebrity.includes(player_lists: :user).order(:name)
   end
 
   def show

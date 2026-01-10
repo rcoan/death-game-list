@@ -17,7 +17,16 @@
     <tbody>
       <% @celebrities.each do |celebrity| %>
         <tr>
-          <td><%= celebrity.name %></td>
+          <td>
+            <% users_with_celebrity = celebrity.player_lists.includes(:user).map { |pl| pl.user.username }.uniq %>
+            <% if users_with_celebrity.any? %>
+              <span class="celebrity-name-tooltip" data-tooltip="<%= users_with_celebrity.join(', ') %>">
+                <%= celebrity.name %>
+              </span>
+            <% else %>
+              <%= celebrity.name %>
+            <% end %>
+          </td>
           <td>
             <% if celebrity.is_deceased? %>
               <span class="deceased">Morto</span>

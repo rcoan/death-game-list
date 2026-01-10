@@ -313,6 +313,8 @@ tr:last-child td {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 0;
 }
 
 .card h2 {
@@ -328,20 +330,23 @@ tr:last-child td {
 
 .autocomplete-container {
   position: relative;
+  z-index: 100 !important;
 }
 
 .autocomplete-results {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
   background: white;
   border: 1px solid #ddd;
-  border-top: none;
+  border-radius: 8px;
   max-height: 200px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 1000 !important;
   display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
 }
 
 .autocomplete-results.active {
@@ -649,6 +654,67 @@ h1 {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid #e0e0e0;
+}
+
+/* Tooltip Styles */
+.celebrity-name-tooltip {
+  position: relative;
+  cursor: help;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: #999;
+}
+
+.celebrity-name-tooltip:hover {
+  color: #667eea;
+}
+
+.celebrity-name-tooltip::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  background: #2c3e50;
+  color: white;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+  max-width: 350px;
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  line-height: 1.5;
+}
+
+.celebrity-name-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 2px;
+  border: 6px solid transparent;
+  border-top-color: #2c3e50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.celebrity-name-tooltip:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.celebrity-name-tooltip:hover::after {
+  opacity: 1;
 }
 
 /* Responsive Styles */
