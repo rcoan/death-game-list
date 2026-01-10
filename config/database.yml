@@ -89,3 +89,15 @@ cable:
   host: <%= ENV.fetch("DEATHS_GAME_DATABASE_HOST") { "localhost" } %>
   port: <%= ENV.fetch("DEATHS_GAME_DATABASE_PORT") { "5432" } %>
   <% end %>
+
+cache:
+  <<: *default
+  # Use the same database as production for cache
+  url: <%= ENV["DATABASE_URL"] %>
+  <% unless ENV["DATABASE_URL"] %>
+  database: <%= ENV.fetch("DEATHS_GAME_DATABASE_NAME") { "deaths_game_production" } %>
+  username: <%= ENV.fetch("DEATHS_GAME_DATABASE_USER") { "deaths_game" } %>
+  password: <%= ENV.fetch("DEATHS_GAME_DATABASE_PASSWORD") { "" } %>
+  host: <%= ENV.fetch("DEATHS_GAME_DATABASE_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("DEATHS_GAME_DATABASE_PORT") { "5432" } %>
+  <% end %>
