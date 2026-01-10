@@ -26,8 +26,8 @@
   <body>
     <nav>
       <div class="nav-container">
-        <h1><%= link_to "Jogo do Morte", root_path %></h1>
-        <div class="nav-links">
+        <div class="nav-left">
+          <h1><%= link_to "Jogo do Morte", root_path %></h1>
           <% if user_signed_in? %>
             <div class="year-selector-nav">
               <label for="year-select-nav">Ano:</label>
@@ -37,16 +37,22 @@
                 <% end %>
               </select>
             </div>
-            <%= link_to "Dashboard", root_path(year: @current_year) %>
-            <%= link_to "Minha Lista", player_lists_path(year: @current_year) %>
-            <% if current_user.admin? %>
-              <%= link_to "Admin - Celebridades", celebrities_path %>
-              <%= link_to "Admin - Usuários", admin_users_path %>
-              <%= link_to "Admin - Anos", admin_game_years_path %>
-            <% end %>
-            <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn-link", form: { style: "display: inline;" } %>
+          <% end %>
+        </div>
+        <div class="nav-right">
+          <% if user_signed_in? %>
+            <div class="nav-links">
+              <%= link_to "Dashboard", root_path(year: @current_year) %>
+              <%= link_to "Minha Lista", player_lists_path(year: @current_year) %>
+              <% if current_user.admin? %>
+                <%= link_to "Admin - Celebridades", celebrities_path %>
+                <%= link_to "Admin - Usuários", admin_users_path %>
+                <%= link_to "Admin - Anos", admin_game_years_path %>
+              <% end %>
+            </div>
+            <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn-link btn-logout", form: { style: "display: inline;" } %>
           <% else %>
-            <%= link_to "Entrar", new_user_session_path %>
+            <%= link_to "Entrar", new_user_session_path, class: "btn-link" %>
           <% end %>
         </div>
       </div>
