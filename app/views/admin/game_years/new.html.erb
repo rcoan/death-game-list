@@ -12,6 +12,12 @@
       <%= f.check_box :is_active, checked: true %>
     </div>
 
+    <div class="form-group">
+      <%= f.label :locked, "Bloqueado?" %>
+      <%= f.check_box :locked %>
+      <small class="form-text">Quando bloqueado, apenas administradores podem editar listas deste ano.</small>
+    </div>
+
     <%= f.submit "Criar Ano", class: "btn btn-success" %>
     <%= link_to "Cancelar", admin_game_years_path, class: "btn" %>
   <% end %>

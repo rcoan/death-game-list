@@ -12,6 +12,7 @@
       <tr>
         <th>Ano</th>
         <th>Status</th>
+        <th>Bloqueado</th>
         <th>Ações</th>
       </tr>
     </thead>
@@ -24,6 +25,13 @@
               <span class="points">Ativo</span>
             <% else %>
               <span class="deceased">Inativo</span>
+            <% end %>
+          </td>
+          <td>
+            <% if game_year.locked? %>
+              <span class="deceased">Bloqueado</span>
+            <% else %>
+              <span>Desbloqueado</span>
             <% end %>
           </td>
           <td>

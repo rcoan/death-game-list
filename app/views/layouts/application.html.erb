@@ -29,8 +29,16 @@
         <h1><%= link_to "Jogo do Morte", root_path %></h1>
         <div class="nav-links">
           <% if user_signed_in? %>
-            <%= link_to "Dashboard", root_path %>
-            <%= link_to "Minha Lista", player_lists_path %>
+            <div class="year-selector-nav">
+              <label for="year-select-nav">Ano:</label>
+              <select id="year-select-nav" onchange="changeYearNav(this.value)">
+                <% @available_years.each do |year| %>
+                  <option value="<%= year %>" <%= 'selected' if year == @current_year %>><%= year %></option>
+                <% end %>
+              </select>
+            </div>
+            <%= link_to "Dashboard", root_path(year: @current_year) %>
+            <%= link_to "Minha Lista", player_lists_path(year: @current_year) %>
             <% if current_user.admin? %>
               <%= link_to "Admin - Celebridades", celebrities_path %>
               <%= link_to "Admin - Usuários", admin_users_path %>
@@ -43,6 +51,14 @@
         </div>
       </div>
     </nav>
+
+    <script>
+      function changeYearNav(year) {
+        const currentPath = window.location.pathname;
+        const separator = currentPath.includes('?') ? '&' : '?';
+        window.location.href = currentPath + separator + 'year=' + year;
+      }
+    </script>
 
     <% if notice %>
       <p class="notice"><%= notice %></p>

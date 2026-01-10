@@ -4,8 +4,15 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!
   before_action :set_current_year
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   private
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_in, keys: [:username])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:username])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:username])
+  end
 
   def set_current_year
     if params[:year].present?
@@ -23,6 +30,7 @@ class ApplicationController < ActionController::Base
     end
     
     @current_year = session[:selected_year] || 2026
+    @current_game_year = GameYear.find_by(year: @current_year)
     @available_years = GameYear.active.ordered.pluck(:year)
   end
 end

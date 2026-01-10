@@ -1,16 +1,24 @@
 <h1>Minha Lista - Ano <%= @current_year %></h1>
 
-<div class="card">
-  <h2>Adicionar Celebridade</h2>
-  <%= form_with url: player_lists_path, method: :post, local: true, class: "autocomplete-container" do |f| %>
-    <div class="form-group">
-      <label for="celebrity_name">Nome da Celebridade</label>
-      <input type="text" id="celebrity_name" name="celebrity_name" autocomplete="off" required>
-      <div class="autocomplete-results" id="autocomplete-results"></div>
-    </div>
-    <%= f.submit "Adicionar", class: "btn btn-success" %>
-  <% end %>
-</div>
+<% if @current_game_year&.locked? && !current_user.admin? %>
+  <div class="card" style="background: #ff6b6b; color: white; margin-bottom: 1rem;">
+    <p><strong>⚠️ Este ano está bloqueado.</strong> Apenas administradores podem editar listas deste ano.</p>
+  </div>
+<% end %>
+
+<% if !@current_game_year&.locked? || current_user.admin? %>
+  <div class="card">
+    <h2>Adicionar Celebridade</h2>
+    <%= form_with url: player_lists_path(year: @current_year), method: :post, local: true, class: "autocomplete-container" do |f| %>
+      <div class="form-group">
+        <label for="celebrity_name">Nome da Celebridade</label>
+        <input type="text" id="celebrity_name" name="celebrity_name" autocomplete="off" required>
+        <div class="autocomplete-results" id="autocomplete-results"></div>
+      </div>
+      <%= f.submit "Adicionar", class: "btn btn-success" %>
+    <% end %>
+  </div>
+<% end %>
 
 <div class="card">
   <h2>Sua Lista (<%= @player_lists.count %>/20)</h2>
@@ -46,8 +54,12 @@
               <% end %>
             </td>
             <td>
-              <%= link_to "Remover", player_list_path(player_list), method: :delete, 
-                  data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+              <% if !@current_game_year&.locked? || current_user.admin? %>
+                <%= link_to "Remover", player_list_path(player_list, year: @current_year), method: :delete, 
+                    data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+              <% else %>
+                <span class="text-muted">Bloqueado</span>
+              <% end %>
             </td>
           </tr>
         <% end %>

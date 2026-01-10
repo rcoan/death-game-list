@@ -47,7 +47,7 @@ class Admin::GameYearsController < ApplicationController
   end
 
   def game_year_params
-    params.require(:game_year).permit(:year, :is_active)
+    params.require(:game_year).permit(:year, :is_active, :locked)
   end
 
   def ensure_admin

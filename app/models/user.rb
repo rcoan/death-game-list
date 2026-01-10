@@ -21,7 +21,8 @@ class User < ApplicationRecord
   def self.find_for_authentication(conditions)
     conditions = conditions.dup
     if conditions.key?(:username)
-      conditions[:username] = conditions[:username].downcase.strip
+      username = conditions.delete(:username).to_s.downcase.strip
+      return where("LOWER(username) = ?", username).first
     end
     where(conditions).first
   end

@@ -1,8 +1,8 @@
-<h1>Usuário: <%= @user.email %></h1>
+<h1>Usuário: <%= @user.username %></h1>
 
 <div class="card">
   <h2>Informações</h2>
-  <p><strong>Email:</strong> <%= @user.email %></p>
+  <p><strong>Usuário:</strong> <%= @user.username %></p>
   <p><strong>Admin:</strong> <%= @user.admin? ? "Sim" : "Não" %></p>
   <p><strong>Pontuação Total:</strong> <span class="points"><%= @user.total_points %> pontos</span></p>
   <p><strong>Celebridades na Lista:</strong> <%= @player_lists.count %>/20</p>

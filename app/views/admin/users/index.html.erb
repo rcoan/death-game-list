@@ -10,7 +10,7 @@
     <table>
     <thead>
       <tr>
-        <th>Email</th>
+        <th>Usuário</th>
         <th>Admin</th>
         <th>Pontuação Total</th>
         <th>Celebridades na Lista</th>
@@ -20,7 +20,7 @@
     <tbody>
       <% @users.each do |user| %>
         <tr>
-          <td><%= user.email %></td>
+          <td><%= user.username %></td>
           <td><%= user.admin? ? "Sim" : "Não" %></td>
           <td class="points"><%= user.total_points %> pontos</td>
           <td><%= user.player_lists.count %>/20</td>

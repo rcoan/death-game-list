@@ -4,7 +4,7 @@ class Admin::UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :manage_list]
 
   def index
-    @users = User.order(:email)
+    @users = User.order(:username)
   end
 
   def show
@@ -87,7 +87,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :admin)
+    params.require(:user).permit(:username, :password, :password_confirmation, :admin)
   end
 
   def ensure_admin

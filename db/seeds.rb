@@ -49,7 +49,7 @@ end
 
 # Criar usuários/jogadores
 players_data = {
-  "Angela" => {
+  "Angela (Coveira)" => {
     username: "angela",
     list: [
       "Fuad Noman", "Tony Tornado", "Preta Gil", "Edgar Vivar", "Mama Bruschetta",
@@ -60,8 +60,8 @@ players_data = {
     deaths: ["Fuad Noman", "Preta Gil", "José Mujica"],
     total_points: 84
   },
-  "Ricardo (Coveiro)" => {
-    username: "ricardo_coveiro",
+  "Ricardo (ex-Coveiro)" => {
+    username: "ricardo",
     list: [
       "Michael Schumacker", "Boris Casoy", "Isabel Veloso", "Faustão", "José Mujica",
       "Claudia Rodrigues", "Marcos Oliveira", "Tony Tornado", "Datena", "Carlos Alberto",
@@ -72,7 +72,7 @@ players_data = {
     total_points: 61
   },
   "RAUL (ex-Coveiro)" => {
-    username: "raul_ex_coveiro",
+    username: "raul",
     list: [
       "Carlos Alberto", "M Schumacker", "Tom Cruise", "Bruce Willis", "Bonner",
       "Didi", "Lima Duarte", "Bruno do Marrone", "Preta Gil", "Raul Gil",
@@ -198,10 +198,14 @@ end
 # Criar usuários e suas listas
 players_data.each do |name, data|
   username = data[:username] || generate_username(name)
-  user = User.find_or_create_by(username: username) do |u|
-    u.password = "password123"
-    u.password_confirmation = "password123"
-    u.admin = data[:admin] || false
+  user = User.find_or_initialize_by(username: username)
+  
+  if user.new_record?
+    user.password = "password123"
+    user.password_confirmation = "password123"
+    user.admin = data[:admin] || false
+    user.email = "#{username}@example.com" if user.email.blank?
+    user.save!
   end
   
   # Atualizar admin se necessário

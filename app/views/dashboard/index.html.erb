@@ -14,6 +14,12 @@
   function changeYear(year) {
     window.location.href = '<%= root_path %>?year=' + year;
   }
+  
+  function changeYearNav(year) {
+    const currentPath = window.location.pathname;
+    const separator = currentPath.includes('?') ? '&' : '?';
+    window.location.href = currentPath + separator + 'year=' + year;
+  }
 </script>
 
 <div class="card">
@@ -34,7 +40,7 @@
           <td><%= index + 1 %></td>
           <td><%= user_data[:user].email %></td>
           <td class="points"><%= user_data[:total_points] %> pontos</td>
-          <td><%= link_to "Ver Lista", player_list_path(user_data[:user].id), class: "btn" %></td>
+          <td><%= link_to "Ver Lista", player_list_path(user_data[:user].id, year: @current_year), class: "btn" %></td>
         </tr>
       <% end %>
     </tbody>
