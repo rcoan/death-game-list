@@ -42,8 +42,9 @@
         <div class="nav-right">
           <% if user_signed_in? %>
             <div class="nav-links">
-              <%= link_to "Dashboard", root_path(year: @current_year) %>
+              <%= link_to "Dashboard", root_path %>
               <%= link_to "Minha Lista", player_lists_path(year: @current_year) %>
+              <%= link_to "Regras", rules_path %>
               <% if current_user.admin? %>
                 <%= link_to "Admin - Celebridades", celebrities_path %>
                 <%= link_to "Admin - Usuários", admin_users_path %>

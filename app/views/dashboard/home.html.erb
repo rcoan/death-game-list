@@ -1,0 +1,194 @@
+<div class="dashboard-header">
+  <h1>Dashboard - Visão Geral</h1>
+</div>
+
+<!-- Ranking de Campeões -->
+<div class="card">
+  <h2>🏆 Ranking de Campeões</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Posição</th>
+          <th>Campeão</th>
+          <th>Vitórias</th>
+          <th>Anos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @champions_ranking.each_with_index do |(user, wins), index| %>
+          <tr class="<%= 'current-champion' if index == 0 %>">
+            <td><%= index + 1 %></td>
+            <td><strong><%= display_user_with_trophies(user) %></strong></td>
+            <td><%= wins %> <%= wins == 1 ? 'vitória' : 'vitórias' %></td>
+            <td>
+              <% GameYear.active.ordered.pluck(:year).select { |y| User.champion_of_year(y) == user }.each do |year| %>
+                <span class="year-badge"><%= year %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Acesso Rápido aos Rankings por Ano -->
+<div class="card">
+  <h2>📅 Rankings por Ano</h2>
+  <div class="year-cards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+    <% @year_rankings.each do |year_data| %>
+      <div class="year-card" style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 1rem; background: white;">
+        <h3 style="margin-top: 0;">
+          <%= year_data[:year] %>
+          <% if year_data[:champion] %>
+            <span style="font-size: 0.8em; color: #666;">- Campeão: <%= display_user_with_trophies(year_data[:champion]) %></span>
+          <% end %>
+        </h3>
+        <div style="margin: 0.5rem 0;">
+          <strong>Top 3:</strong>
+          <ol style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <% year_data[:rankings].first(3).each_with_index do |ranking, idx| %>
+              <li>
+                <%= display_user_with_trophies(ranking[:user]) %> - <%= ranking[:total_points] %> pts
+              </li>
+            <% end %>
+          </ol>
+        </div>
+        <%= link_to "Ver Ranking Completo", year_dashboard_path(year_data[:year]), class: "btn", style: "margin-top: 0.5rem;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Relatórios Cruzados -->
+<div class="card">
+  <h2>📊 Relatórios Cruzados</h2>
+  
+  <!-- Celebridades Mais Repetidas -->
+  <div style="margin-bottom: 2rem;">
+    <h3>Celebridades Mais Repetidas</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Aparições</th>
+            <th>Anos Diferentes</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @most_repeated_celebrities.each do |celeb| %>
+            <tr>
+              <td><%= celeb[:name] %></td>
+              <td><%= celeb[:appearances] %></td>
+              <td><%= celeb[:years_count] %></td>
+              <td>
+                <% if celeb[:is_deceased] %>
+                  <span style="color: #e74c3c;">☠️ Morto</span>
+                <% else %>
+                  <span style="color: #27ae60;">❤️ Vivo</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Repetição vs Morte -->
+  <div style="margin-bottom: 2rem;">
+    <h3>Repetição vs Morte</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <div style="background: #ecf0f1; padding: 1rem; border-radius: 8px;">
+        <div style="font-size: 2em; font-weight: bold; color: #e74c3c;">
+          <%= @repetition_vs_death[:repeated_and_died] %>
+        </div>
+        <div>Repetidos e Morreram</div>
+      </div>
+      <div style="background: #ecf0f1; padding: 1rem; border-radius: 8px;">
+        <div style="font-size: 2em; font-weight: bold; color: #f39c12;">
+          <%= @repetition_vs_death[:repeated_but_alive] %>
+        </div>
+        <div>Repetidos e Vivos</div>
+      </div>
+      <div style="background: #ecf0f1; padding: 1rem; border-radius: 8px;">
+        <div style="font-size: 2em; font-weight: bold; color: #3498db;">
+          <%= @repetition_vs_death[:appeared_once_and_died] %>
+        </div>
+        <div>Apareceu 1x e Morreu</div>
+      </div>
+      <div style="background: #ecf0f1; padding: 1rem; border-radius: 8px;">
+        <div style="font-size: 2em; font-weight: bold; color: #27ae60;">
+          <%= @repetition_vs_death[:appeared_once_and_alive] %>
+        </div>
+        <div>Apareceu 1x e Vivo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estatísticas de Morte -->
+  <div>
+    <h3>Estatísticas de Mortes</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Ano</th>
+            <th>Total Mortes</th>
+            <th>Pontos Totais</th>
+            <th>Média Pontos/Morte</th>
+            <th>Pontos Máximos</th>
+            <th>Pontos do Campeão</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @death_statistics[:by_year].each do |stats| %>
+            <tr>
+              <td><strong><%= stats[:year] %></strong></td>
+              <td><%= stats[:total_deaths] %></td>
+              <td><%= stats[:total_points] %></td>
+              <td><%= stats[:avg_points] %></td>
+              <td><%= stats[:max_points] %></td>
+              <td><strong><%= stats[:champion_points] %></strong></td>
+            </tr>
+          <% end %>
+          <tr style="background: #ecf0f1; font-weight: bold;">
+            <td>Total</td>
+            <td><%= @death_statistics[:overall][:total_deaths] %></td>
+            <td>-</td>
+            <td><%= @death_statistics[:overall][:avg_points_per_death] %></td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .current-champion {
+    background-color: #fff3cd !important;
+    font-weight: bold;
+  }
+  
+  .year-badge {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin-right: 0.3rem;
+  }
+  
+  .year-card:hover {
+    border-color: #667eea !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+  }
+</style>
+

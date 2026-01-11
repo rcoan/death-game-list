@@ -1,26 +1,9 @@
 <div class="dashboard-header">
-  <h1>Dashboard - Ranking Geral</h1>
-  <div class="year-filter">
-    <label for="year-select">Ano:</label>
-    <select id="year-select" onchange="changeYear(this.value)">
-      <% @available_years.each do |year| %>
-        <option value="<%= year %>" <%= 'selected' if year == @current_year %>><%= year %></option>
-      <% end %>
-    </select>
+  <h1>Dashboard - Ranking <%= @view_year %></h1>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+    <%= link_to "← Voltar ao Dashboard", root_path, class: "btn" %>
   </div>
 </div>
-
-<script>
-  function changeYear(year) {
-    window.location.href = '<%= root_path %>?year=' + year;
-  }
-  
-  function changeYearNav(year) {
-    const currentPath = window.location.pathname;
-    const separator = currentPath.includes('?') ? '&' : '?';
-    window.location.href = currentPath + separator + 'year=' + year;
-  }
-</script>
 
 <div class="card">
   <h2>Ranking de Pontuação</h2>
@@ -36,11 +19,16 @@
     </thead>
     <tbody>
       <% @users.each_with_index do |user_data, index| %>
-        <tr>
+        <tr class="<%= 'champion-row' if index == 0 %>">
           <td><%= index + 1 %></td>
-          <td><%= user_data[:user].username %></td>
+          <td>
+            <%= display_user_with_trophies(user_data[:user]) %>
+            <% if index == 0 %>
+              <span style="color: #f39c12; margin-left: 0.5rem;">👑 Campeão</span>
+            <% end %>
+          </td>
           <td class="points"><%= user_data[:total_points] %> pontos</td>
-          <td><%= link_to "Ver Lista", player_list_path(user_data[:user].id, year: @current_year), class: "btn" %></td>
+          <td><%= link_to "Ver Lista", player_list_path(user_data[:user].id, year: @view_year), class: "btn" %></td>
         </tr>
       <% end %>
     </tbody>
@@ -66,7 +54,7 @@
           <tr>
             <td><%= celebrity.name %></td>
             <td><%= celebrity.age_at_death %> anos</td>
-            <td class="points"><%= display_points_for_year(celebrity, @current_year) %></td>
+            <td class="points"><%= display_points_for_year(celebrity, @view_year) %></td>
             <td><%= celebrity.death_date&.strftime("%d/%m/%Y") %></td>
           </tr>
         <% end %>
@@ -196,4 +184,11 @@
     }]
   }.to_json) %>;
 </script>
+
+<style>
+  .champion-row {
+    background-color: #fff3cd !important;
+    font-weight: bold;
+  }
+</style>
 

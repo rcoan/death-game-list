@@ -17,4 +17,11 @@ module ApplicationHelper
       content_tag(:span, "0 pontos", class: "points")
     end
   end
+
+  # Retorna o nome do usuário com emojis de vitórias
+  def display_user_with_trophies(user)
+    wins = user.championship_wins
+    return user.username if wins == 0
+    "#{user.username} #{'☠️' * wins}"
+  end
 end

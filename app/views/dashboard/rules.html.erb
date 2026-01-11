@@ -1,0 +1,148 @@
+<div class="dashboard-header">
+  <h1>📜 Regras do Jogo</h1>
+  <%= link_to "← Voltar ao Dashboard", root_path, class: "btn" %>
+</div>
+
+<div class="card">
+  <h2>🎯 Objetivo do Jogo</h2>
+  <p>
+    O <strong>Jogo do Morte</strong> é um jogo de previsão onde os participantes escolhem celebridades que acreditam que irão falecer durante o ano. 
+    O objetivo é acumular o maior número de pontos possível através das mortes das celebridades escolhidas.
+  </p>
+</div>
+
+<div class="card">
+  <h2>📋 Como Funciona</h2>
+  
+  <h3>1. Escolha de Celebridades</h3>
+  <ul>
+    <li>Cada jogador deve escolher <strong>exatamente 20 celebridades</strong> para sua lista anual</li>
+    <li>As celebridades devem ser pessoas públicas conhecidas (atores, cantores, políticos, etc.)</li>
+    <li>Uma vez escolhidas, as listas são bloqueadas no início do ano</li>
+  </ul>
+
+  <h3>2. Sistema de Pontuação</h3>
+  <ul>
+    <li>A pontuação é calculada pela fórmula: <strong>100 - idade da morte</strong></li>
+    <li>Quanto mais jovem a celebridade morrer, mais pontos você ganha</li>
+    <li>Exemplos:
+      <ul>
+        <li>Morte aos 30 anos = 70 pontos</li>
+        <li>Morte aos 50 anos = 50 pontos</li>
+        <li>Morte aos 80 anos = 20 pontos</li>
+        <li>Morte aos 95 anos = 5 pontos</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>3. Período de Validade</h3>
+  <ul>
+    <li>O jogo começa em <strong>15 de janeiro</strong> de cada ano</li>
+    <li><em>Nota: A data de início está sujeita a alterações em situações extraordinárias, decididas pelo presidente do alto conselho.</em></li>
+    <li>Apenas mortes ocorridas após a data de início contam pontos</li>
+    <li>Mortes ocorridas antes do início do jogo não contam</li>
+    <li>O jogo termina em <strong>31 de dezembro</strong> do mesmo ano</li>
+  </ul>
+
+  <h3>4. Campeonato</h3>
+  <ul>
+    <li>O jogador com <strong>maior pontuação</strong> ao final do ano é o <strong>Coveiro ☠️</strong></strong></li>
+    <li>O ranking de campeões mostra todos os vencedores ordenados por número de vitórias</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>⚠️ Regras Importantes</h2>
+  
+  <h3>Validação de Mortes</h3>
+  <ul>
+    <li>Apenas mortes <strong>confirmadas e divulgadas publicamente</strong> contam</li>
+    <li>Mortes devem ser registradas no sistema por administradores</li>
+    <li>Fake news ou boatos não contam pontos</li>
+  </ul>
+
+  <h3>Limitações</h3>
+  <ul>
+    <li>Não é permitido escolher a mesma celebridade mais de uma vez na mesma lista</li>
+    <li>Celebridades podem aparecer em listas de anos diferentes</li>
+    <li>Uma vez que a lista é bloqueada, não é possível adicionar ou remover celebridades</li>
+  </ul>
+
+  <h3>Conduta</h3>
+  <ul>
+    <li>O jogo é apenas para entretenimento</li>
+    <li>Respeite os outros jogadores</li>
+    <li>Não é permitido criar celebridades falsas ou inventar mortes</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>📊 Funcionalidades do Sistema</h2>
+  
+  <h3>Dashboard</h3>
+  <ul>
+    <li><strong>Dashboard Inicial:</strong> Visão geral com ranking de campeões e relatórios cruzados</li>
+    <li><strong>Dashboard por Ano:</strong> Ranking detalhado de cada ano com gráficos e estatísticas</li>
+    <li><strong>Minha Lista:</strong> Visualize e gerencie sua lista de celebridades</li>
+  </ul>
+
+  <h3>Relatórios</h3>
+  <ul>
+    <li><strong>Celebridades Mais Repetidas:</strong> Veja quais celebridades aparecem mais nas listas</li>
+    <li><strong>Repetição vs Morte:</strong> Estatísticas sobre celebridades repetidas que morreram</li>
+    <li><strong>Estatísticas de Mortes:</strong> Análise de mortes por ano, pontos e campeões</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>❓ Perguntas Frequentes</h2>
+  
+  <h3>E se uma celebridade morrer no dia 14 de janeiro?</h3>
+  <p>Não conta pontos, pois o jogo começa no dia 15 de janeiro.</p>
+
+  <h3>Posso mudar minha lista depois de criada?</h3>
+  <p>Não, uma vez que a lista é bloqueada no início do ano, não é possível fazer alterações.</p>
+
+  <h3>O que acontece se eu não escolher 20 celebridades?</h3>
+  <p>Você <strong>deve</strong> escolher exatamente 20 celebridades. A lista não estará completa até que você tenha 20 celebridades selecionadas.</p>
+
+
+  <h3>Celebridades podem aparecer em múltiplos anos?</h3>
+  <p>Sim, uma celebridade pode aparecer em listas de anos diferentes. Se ela morrer em um ano específico, apenas os jogadores que a escolheram naquele ano ganham pontos.</p>
+</div>
+
+<div class="card" style="background: #f8f9fa; border-left: 4px solid #667eea;">
+  <h2>🎮 Divirta-se!</h2>
+  <p>
+    Lembre-se: este é um jogo de previsão e sorte. Não há garantias de que suas escolhas resultarão em pontos. 
+    O importante é participar e se divertir com os amigos!
+  </p>
+  <p style="margin-top: 1rem;">
+    <strong>Boa sorte e que a sorte esteja com você! ☠️</strong>
+  </p>
+</div>
+
+<style>
+  .card h3 {
+    color: #667eea;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2em;
+  }
+  
+  .card ul {
+    margin-left: 1.5rem;
+    line-height: 1.8;
+  }
+  
+  .card ul ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .card p {
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+</style>
+
