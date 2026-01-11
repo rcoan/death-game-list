@@ -28,9 +28,14 @@ class User < ApplicationRecord
   end
 
   def total_points(year = Date.current.year)
+    game_year = GameYear.find_by(year: year)
+    return 0 unless game_year
+    
     player_lists.for_year(year)
                 .joins(:celebrity)
                 .where(celebrities: { is_deceased: true })
+                .where("celebrities.death_date >= ?", game_year.start_date)
+                .where("celebrities.death_date < ?", Date.new(year + 1, 1, 1))
                 .sum("celebrities.points")
   end
 end

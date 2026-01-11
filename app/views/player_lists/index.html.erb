@@ -49,11 +49,7 @@
               <% end %>
             </td>
             <td>
-              <% if player_list.celebrity.is_deceased? %>
-                <span class="points"><%= player_list.celebrity.points %> pontos</span>
-              <% else %>
-                -
-              <% end %>
+              <%= display_points_for_year(player_list.celebrity, @current_year) %>
             </td>
             <td>
               <% if !@current_game_year&.locked? || current_user.admin? %>

@@ -22,7 +22,7 @@
         <tr>
           <td><%= user.username %></td>
           <td><%= user.admin? ? "Sim" : "Não" %></td>
-          <td class="points"><%= user.total_points %> pontos</td>
+          <td class="points"><%= user.total_points(@current_year) %> pontos</td>
           <td><%= user.player_lists.count %>/20</td>
           <td>
             <%= link_to "Ver", admin_user_path(user), class: "btn" %>

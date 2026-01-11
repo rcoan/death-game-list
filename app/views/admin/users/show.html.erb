@@ -4,7 +4,7 @@
   <h2>Informações</h2>
   <p><strong>Usuário:</strong> <%= @user.username %></p>
   <p><strong>Admin:</strong> <%= @user.admin? ? "Sim" : "Não" %></p>
-  <p><strong>Pontuação Total:</strong> <span class="points"><%= @user.total_points %> pontos</span></p>
+  <p><strong>Pontuação Total (<%= @current_year %>):</strong> <span class="points"><%= @user.total_points(@current_year) %> pontos</span></p>
   <p><strong>Celebridades na Lista:</strong> <%= @player_lists.count %>/20</p>
 </div>
 
@@ -34,11 +34,7 @@
               <% end %>
             </td>
             <td>
-              <% if player_list.celebrity.is_deceased? %>
-                <span class="points"><%= player_list.celebrity.points %> pontos</span>
-              <% else %>
-                -
-              <% end %>
+              <%= display_points_for_year(player_list.celebrity, @current_year) %>
             </td>
           </tr>
         <% end %>

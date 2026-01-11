@@ -11,6 +11,7 @@
     <thead>
       <tr>
         <th>Ano</th>
+        <th>Data de Início</th>
         <th>Status</th>
         <th>Bloqueado</th>
         <th>Ações</th>
@@ -20,6 +21,7 @@
       <% @game_years.each do |game_year| %>
         <tr>
           <td><%= game_year.year %></td>
+          <td><%= game_year.start_date&.strftime("%d/%m/%Y") || "-" %></td>
           <td>
             <% if game_year.is_active? %>
               <span class="points">Ativo</span>

@@ -41,11 +41,7 @@
               <% end %>
             </td>
             <td>
-              <% if player_list.celebrity.is_deceased? %>
-                <span class="points"><%= player_list.celebrity.points %> pontos</span>
-              <% else %>
-                -
-              <% end %>
+              <%= display_points_for_year(player_list.celebrity, @current_year) %>
             </td>
             <td>
               <%= link_to "Remover", remove_from_list_admin_user_path(@user, player_list_id: player_list.id), 

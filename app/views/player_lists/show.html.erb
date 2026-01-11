@@ -1,4 +1,4 @@
-<h1>Lista de <%= @user.email %></h1>
+<h1>Lista de <%= @user.username %></h1>
 
 <div class="card">
   <h2>Celebridades (<%= @player_lists.count %>)</h2>
@@ -26,11 +26,7 @@
               <% end %>
             </td>
             <td>
-              <% if player_list.celebrity.is_deceased? %>
-                <span class="points"><%= player_list.celebrity.points %> pontos</span>
-              <% else %>
-                -
-              <% end %>
+              <%= display_points_for_year(player_list.celebrity, @current_year) %>
             </td>
           </tr>
         <% end %>

@@ -17,10 +17,12 @@ end
 # Criar anos padrão
 GameYear.find_or_create_by(year: 2025) do |gy|
   gy.is_active = true
+  gy.start_date = Date.new(2025, 1, 15)
 end
 
 GameYear.find_or_create_by(year: 2026) do |gy|
   gy.is_active = true
+  gy.start_date = Date.new(2026, 1, 15)
 end
 
 puts "Game years created: 2025, 2026"

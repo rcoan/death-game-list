@@ -4,17 +4,24 @@ class DashboardController < ApplicationController
     user_ids_with_lists = PlayerList.for_year(@current_year).distinct.pluck(:user_id)
     users_with_lists = User.where(id: user_ids_with_lists)
     
+    @current_game_year = GameYear.find_by(year: @current_year)
+    @year_start_date = @current_game_year&.start_date || Date.new(@current_year, 1, 15)
+    @year_end_date = Date.new(@current_year + 1, 1, 1)
+    
     @users = users_with_lists.map do |user|
       { user: user, total_points: user.total_points(@current_year) }
     end.sort_by { |u| -u[:total_points] }
 
     # Todas as mortes de celebridades que estão nas listas do ano selecionado
+    # Apenas mortes que ocorreram após a start_date do ano
     celebrity_ids_in_lists = PlayerList.for_year(@current_year).pluck(:celebrity_id).uniq
     @all_deaths = Celebrity.where(id: celebrity_ids_in_lists, is_deceased: true)
+                          .where("death_date >= ? AND death_date < ?", @year_start_date, @year_end_date)
                           .order(death_date: :desc)
 
     deaths_in_lists = Celebrity.where(id: celebrity_ids_in_lists, is_deceased: true)
                               .where.not(death_date: nil)
+                              .where("death_date >= ? AND death_date < ?", @year_start_date, @year_end_date)
     
     # Criar dados cumulativos para todos os 12 meses do ano em ordem cronológica
     year = @current_year

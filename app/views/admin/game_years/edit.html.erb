@@ -13,6 +13,12 @@
     </div>
 
     <div class="form-group">
+      <%= f.label :start_date, "Data de Início" %>
+      <%= f.date_field :start_date, required: true, class: "form-control" %>
+      <small class="form-text">Data a partir da qual as mortes começam a contar pontos para este ano. Mortes antes desta data não contam.</small>
+    </div>
+
+    <div class="form-group">
       <%= f.label :locked, "Bloqueado?" %>
       <%= f.check_box :locked %>
       <small class="form-text">Quando bloqueado, apenas administradores podem editar listas deste ano.</small>
