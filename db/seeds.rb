@@ -16,40 +16,49 @@ end
 
 # Função genérica para popular um ano
 def seed_year(year, game_year_config, all_deaths, players_data)
-  # Verificar se o ano já foi populado (em produção)
-  if Rails.env.production? && PlayerList.where(year: year).exists?
-    puts "Year #{year} already has data in production. Skipping."
-    return
-  end
-
   puts "\n" + "="*80
   puts "Seeding year #{year}"
   puts "="*80
 
-  # Criar/atualizar GameYear
+  # Criar/atualizar GameYear (em produção, só cria se não existir)
   game_year = GameYear.find_or_create_by(year: year) do |gy|
     gy.is_active = game_year_config[:is_active] || false
     gy.start_date = game_year_config[:start_date] || Date.new(year, 1, 15)
     gy.locked = game_year_config[:locked] || false
   end
   
-  # Atualizar se já existir
-  game_year.update!(
-    is_active: game_year_config[:is_active] || false,
-    start_date: game_year_config[:start_date] || Date.new(year, 1, 15),
-    locked: game_year_config[:locked] || false
-  )
+  # Em produção, não atualiza GameYear existente para não mudar configurações
+  unless Rails.env.production? && game_year.persisted?
+    game_year.update!(
+      is_active: game_year_config[:is_active] || false,
+      start_date: game_year_config[:start_date] || Date.new(year, 1, 15),
+      locked: game_year_config[:locked] || false
+    )
+  end
 
   # Criar todas as celebridades mortas primeiro
   all_deaths.each do |name, death_info|
     celebrity = Celebrity.where('LOWER(name) = ?', name.downcase).first
     if celebrity
-      celebrity.update!(
-        is_deceased: true,
-        age_at_death: death_info[:age],
-        death_date: death_info[:date],
-        points: death_info[:points]
-      )
+      # Em produção, só atualiza se não tiver dados de morte ainda
+      if Rails.env.production?
+        unless celebrity.is_deceased? && celebrity.death_date.present?
+          celebrity.update!(
+            is_deceased: true,
+            age_at_death: death_info[:age],
+            death_date: death_info[:date],
+            points: death_info[:points]
+          )
+        end
+      else
+        # Em dev, sempre atualiza
+        celebrity.update!(
+          is_deceased: true,
+          age_at_death: death_info[:age],
+          death_date: death_info[:date],
+          points: death_info[:points]
+        )
+      end
     else
       Celebrity.create!(
         name: name,
@@ -67,16 +76,18 @@ def seed_year(year, game_year_config, all_deaths, players_data)
     user = User.find_or_initialize_by(username: username)
     
     if user.new_record?
+      # Criar novo usuário
       user.password = "password123"
       user.password_confirmation = "password123"
       user.admin = data[:admin] || false
       user.email = "#{username}@example.com" if user.email.blank?
       user.save!
-    end
-    
-    # Atualizar admin se necessário
-    if data[:admin] && !user.admin?
-      user.update!(admin: true)
+    else
+      # Em produção, não altera senha, email ou admin de usuários existentes
+      # Apenas atualiza admin se necessário e não for produção
+      if !Rails.env.production? && data[:admin] && !user.admin?
+        user.update!(admin: true)
+      end
     end
 
     # Criar celebridades e adicionar à lista
@@ -99,12 +110,25 @@ def seed_year(year, game_year_config, all_deaths, players_data)
       death_key = all_deaths.keys.find { |k| k.downcase == celebrity_name.downcase }
       if death_key
         death_info = all_deaths[death_key]
-        celebrity.update!(
-          is_deceased: true,
-          age_at_death: death_info[:age],
-          death_date: death_info[:date],
-          points: death_info[:points]
-        )
+        # Em produção, só atualiza se não tiver dados de morte ainda
+        if Rails.env.production?
+          unless celebrity.is_deceased? && celebrity.death_date.present?
+            celebrity.update!(
+              is_deceased: true,
+              age_at_death: death_info[:age],
+              death_date: death_info[:date],
+              points: death_info[:points]
+            )
+          end
+        else
+          # Em dev, sempre atualiza
+          celebrity.update!(
+            is_deceased: true,
+            age_at_death: death_info[:age],
+            death_date: death_info[:date],
+            points: death_info[:points]
+          )
+        end
       end
 
       # Criar player_list apenas se não existir
