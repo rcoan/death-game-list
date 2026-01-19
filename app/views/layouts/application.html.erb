@@ -46,9 +46,17 @@
               <%= link_to "Minha Lista", player_lists_path(year: @current_year) %>
               <%= link_to "Regras", rules_path %>
               <% if current_user.admin? %>
-                <%= link_to "Admin - Celebridades", celebrities_path %>
-                <%= link_to "Admin - Usuários", admin_users_path %>
-                <%= link_to "Admin - Anos", admin_game_years_path %>
+                <div class="nav-dropdown">
+                  <button class="nav-dropdown-toggle" onclick="toggleAdminMenu(event)">
+                    Admin ▼
+                  </button>
+                  <div class="nav-dropdown-menu" id="admin-menu">
+                    <%= link_to "Celebridades", celebrities_path, class: "nav-dropdown-item" %>
+                    <%= link_to "Usuários", admin_users_path, class: "nav-dropdown-item" %>
+                    <%= link_to "Anos", admin_game_years_path, class: "nav-dropdown-item" %>
+                    <%= link_to "Importar", admin_imports_path, class: "nav-dropdown-item" %>
+                  </div>
+                </div>
               <% end %>
             </div>
             <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn-link btn-logout", form: { style: "display: inline;" } %>
@@ -65,6 +73,84 @@
         const separator = currentPath.includes('?') ? '&' : '?';
         window.location.href = currentPath + separator + 'year=' + year;
       }
+
+      let adminMenuOriginalParent = null;
+      let adminMenuOriginalNextSibling = null;
+
+      function moveAdminMenuOut() {
+        const menu = document.getElementById('admin-menu');
+        const toggle = document.querySelector('.nav-dropdown-toggle');
+        
+        if (menu && menu.classList.contains('show') && toggle && menu.parentNode !== document.body) {
+          adminMenuOriginalParent = menu.parentNode;
+          adminMenuOriginalNextSibling = menu.nextSibling;
+          document.body.appendChild(menu);
+          
+          const rect = toggle.getBoundingClientRect();
+          menu.style.position = 'fixed';
+          menu.style.top = (rect.bottom + 8) + 'px';
+          menu.style.left = (rect.right - 200) + 'px'; // 200px is min-width
+          menu.style.right = 'auto';
+          menu.style.zIndex = '10000';
+        }
+      }
+
+      function moveAdminMenuBack() {
+        const menu = document.getElementById('admin-menu');
+        
+        if (adminMenuOriginalParent && menu && menu.parentNode === document.body) {
+          if (adminMenuOriginalNextSibling) {
+            adminMenuOriginalParent.insertBefore(menu, adminMenuOriginalNextSibling);
+          } else {
+            adminMenuOriginalParent.appendChild(menu);
+          }
+          menu.style.position = '';
+          menu.style.top = '';
+          menu.style.left = '';
+          menu.style.right = '';
+          menu.style.zIndex = '';
+          adminMenuOriginalParent = null;
+          adminMenuOriginalNextSibling = null;
+        }
+      }
+
+      function positionAdminMenu() {
+        const menu = document.getElementById('admin-menu');
+        const toggle = document.querySelector('.nav-dropdown-toggle');
+        
+        if (menu && menu.classList.contains('show') && toggle && menu.parentNode === document.body) {
+          const rect = toggle.getBoundingClientRect();
+          menu.style.top = (rect.bottom + 8) + 'px';
+          menu.style.left = (rect.right - 200) + 'px';
+        }
+      }
+
+      function toggleAdminMenu(event) {
+        event.stopPropagation();
+        const menu = document.getElementById('admin-menu');
+        
+        if (menu.classList.contains('show')) {
+          menu.classList.remove('show');
+          moveAdminMenuBack();
+        } else {
+          menu.classList.add('show');
+          setTimeout(moveAdminMenuOut, 0);
+        }
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        const menu = document.getElementById('admin-menu');
+        const toggle = document.querySelector('.nav-dropdown-toggle');
+        if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
+          menu.classList.remove('show');
+          moveAdminMenuBack();
+        }
+      });
+
+      // Reposition on scroll and resize
+      window.addEventListener('scroll', positionAdminMenu);
+      window.addEventListener('resize', positionAdminMenu);
     </script>
 
     <% if notice %>

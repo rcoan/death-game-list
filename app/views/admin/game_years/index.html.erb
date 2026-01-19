@@ -37,9 +37,11 @@
             <% end %>
           </td>
           <td>
-            <%= link_to "Editar", edit_admin_game_year_path(game_year), class: "btn" %>
-            <%= link_to "Deletar", admin_game_year_path(game_year), method: :delete, 
-                data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+            <div class="action-buttons">
+              <%= link_to "Editar", edit_admin_game_year_path(game_year), class: "btn" %>
+              <%= link_to "Deletar", admin_game_year_path(game_year), method: :delete, 
+                  data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+            </div>
           </td>
         </tr>
       <% end %>

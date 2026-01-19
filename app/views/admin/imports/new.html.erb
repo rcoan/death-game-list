@@ -1,0 +1,35 @@
+<h1>Nova Importação de Listas</h1>
+
+<div class="card">
+  <%= form_with url: admin_imports_path, method: :post, local: true, multipart: true do |f| %>
+    <div class="form-group">
+      <%= f.label :year, "Ano" %>
+      <%= f.number_field :year, required: true, class: "form-control", min: 2000, max: 2100, value: 2026 %>
+      <small class="form-text">O ano para o qual as listas serão importadas. Se não especificado, será usado o ano do JSON.</small>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :json_file, "Arquivo JSON (opcional)" %>
+      <%= f.file_field :json_file, accept: "application/json", class: "form-control" %>
+      <small class="form-text">Se não especificar um arquivo, será usado o arquivo padrão: <code>db/lists_2026_validation.json</code></small>
+    </div>
+
+    <div class="form-group">
+      <div class="alert alert-warning">
+        <strong>Atenção:</strong> Esta operação irá:
+        <ul>
+          <li>Remover todas as listas existentes do ano especificado para os usuários no JSON</li>
+          <li>Criar novos usuários se necessário</li>
+          <li>Criar novas celebridades se necessário</li>
+          <li>Criar novas listas com as celebridades especificadas</li>
+        </ul>
+      </div>
+    </div>
+
+    <%= f.submit "Importar Listas", class: "btn btn-success", data: { confirm: "Tem certeza que deseja importar as listas? Isso irá substituir as listas existentes do ano especificado." } %>
+    <%= link_to "Cancelar", admin_imports_path, class: "btn" %>
+  <% end %>
+</div>
+
+<%= link_to "Voltar", admin_imports_path, class: "btn" %>
+

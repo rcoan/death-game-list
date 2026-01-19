@@ -22,7 +22,8 @@
             <td><strong><%= display_user_with_trophies(user) %></strong></td>
             <td><%= wins %> <%= wins == 1 ? 'vitória' : 'vitórias' %></td>
             <td>
-              <% GameYear.active.ordered.pluck(:year).select { |y| User.champion_of_year(y) == user }.each do |year| %>
+              <% current_year = Date.current.year %>
+              <% GameYear.active.ordered.pluck(:year).select { |y| y < current_year && User.champion_of_year(y) == user }.each do |year| %>
                 <span class="year-badge"><%= year %></span>
               <% end %>
             </td>
@@ -43,6 +44,8 @@
           <%= year_data[:year] %>
           <% if year_data[:champion] %>
             <span style="font-size: 0.8em; color: #666;">- Campeão: <%= display_user_with_trophies(year_data[:champion]) %></span>
+          <% elsif year_data[:year] >= Date.current.year %>
+            <span style="font-size: 0.8em; color: #999;">- Em andamento</span>
           <% end %>
         </h3>
         <div style="margin: 0.5rem 0;">

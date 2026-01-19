@@ -2,6 +2,7 @@
 
 <div class="card">
   <%= link_to "Criar Novo Usuário", new_admin_user_path, class: "btn btn-success" %>
+  <%= link_to "Importar Listas", admin_imports_path, class: "btn btn-primary" %>
 </div>
 
 <div class="card">
@@ -25,11 +26,13 @@
           <td class="points"><%= user.total_points(@current_year) %> pontos</td>
           <td><%= user.player_lists.count %>/20</td>
           <td>
-            <%= link_to "Ver", admin_user_path(user), class: "btn" %>
-            <%= link_to "Gerenciar Lista", manage_list_admin_user_path(user), class: "btn" %>
-            <%= link_to "Editar", edit_admin_user_path(user), class: "btn" %>
-            <%= link_to "Deletar", admin_user_path(user), method: :delete, 
-                data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+            <div class="action-buttons">
+              <%= link_to "Ver", admin_user_path(user), class: "btn" %>
+              <%= link_to "Gerenciar Lista", manage_list_admin_user_path(user), class: "btn" %>
+              <%= link_to "Editar", edit_admin_user_path(user), class: "btn" %>
+              <%= link_to "Deletar", admin_user_path(user), method: :delete, 
+                  data: { confirm: "Tem certeza?" }, class: "btn btn-danger" %>
+            </div>
           </td>
         </tr>
       <% end %>

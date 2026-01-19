@@ -1,0 +1,181 @@
+<h1>Admin - Verificar Duplicatas de Celebridades</h1>
+
+<div class="card">
+  <%= link_to "← Voltar", celebrities_path, class: "btn" %>
+  <%= link_to "🔄 Atualizar", find_duplicates_celebrities_path, class: "btn" %>
+</div>
+
+<% if @duplicates.any? %>
+  <div class="card">
+    <h2>Possíveis Duplicatas Encontradas: <%= @duplicates.count %></h2>
+    <p>Selecione quais duplicatas deseja mesclar. A primeira celebridade de cada grupo será mantida como destino.</p>
+    
+    <%= form_with url: bulk_merge_celebrities_path, method: :post, local: true do |f| %>
+      <div class="duplicates-list" style="margin-top: 1rem;">
+        <% @duplicates.each_with_index do |duplicate, index| %>
+          <div class="duplicate-group" style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: white;">
+            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+              <%= check_box_tag "merge_groups[#{index}][enabled]", "1", false, 
+                  class: "merge-group-checkbox", 
+                  data: { group: index },
+                  style: "margin-right: 0.5rem; transform: scale(1.2);" %>
+              <h3 style="margin: 0;">Grupo <%= index + 1 %> - <%= duplicate[:normalized] %></h3>
+              <span style="margin-left: auto; font-size: 0.9em; color: #666;">
+                <%= duplicate[:total_lists] %> lista(s) | 
+                <% if duplicate[:has_deceased] %>
+                  <span style="color: #e74c3c;">Tem morto</span>
+                <% else %>
+                  <span style="color: #27ae60;">Todos vivos</span>
+                <% end %>
+              </span>
+            </div>
+            
+            <div class="duplicate-items" style="margin-left: 2rem;">
+              <% duplicate[:group].each_with_index do |celebrity, celeb_index| %>
+                <div style="display: flex; align-items: flex-start; padding: 0.75rem; background: #f8f9fa; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid #e0e0e0;">
+                  <div style="display: flex; flex-direction: column; margin-right: 1rem; min-width: 200px;">
+                    <%= radio_button_tag "merge_groups[#{index}][target_id]", celebrity.id, false, 
+                        class: "target-radio", 
+                        data: { group: index, celebrity_id: celebrity.id },
+                        style: "margin-bottom: 0.5rem; transform: scale(1.2);" %>
+                    <label for="merge_groups_<%= index %>_target_id_<%= celebrity.id %>" style="margin: 0; cursor: pointer; font-weight: normal; color: inherit;">
+                      ⭐ DESTINO (manter esta)
+                    </label>
+                    
+                    <%= check_box_tag "merge_groups[#{index}][source_ids][]", celebrity.id, false, 
+                          class: "source-checkbox", 
+                          data: { group: index, celebrity_id: celebrity.id },
+                          style: "margin-top: 0.5rem; transform: scale(1.2);" %>
+                      <label for="merge_groups_<%= index %>_source_ids_<%= celebrity.id %>" style="margin: 0; cursor: pointer; margin-top: 0.25rem;">
+                        ✓ Mesclar para o destino
+                      </label>
+                  </div>
+                  
+                  <div style="flex: 1;">
+                    <strong style="font-size: 1.1em;"><%= celebrity.name %></strong>
+                    <div style="font-size: 0.85em; color: #666; margin-top: 0.25rem;">
+                      ID: <%= celebrity.id %> | 
+                      Listas: <%= celebrity.player_lists.count %> | 
+                      <% if celebrity.is_deceased? %>
+                        <span style="color: #e74c3c;">Morto</span>
+                        <% if celebrity.death_date %>
+                          (<%= celebrity.death_date.strftime("%d/%m/%Y") %> - <%= celebrity.points %> pts)
+                        <% end %>
+                      <% else %>
+                        <span style="color: #27ae60;">Vivo</span>
+                      <% end %>
+                    </div>
+                    <% if celebrity.player_lists.any? %>
+                      <div style="font-size: 0.8em; color: #999; margin-top: 0.25rem;">
+                        Usuários: <%= celebrity.player_lists.includes(:user).map { |pl| pl.user.username }.uniq.join(", ") %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="form-actions" style="margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e0e0e0;">
+        <button type="submit" class="btn btn-danger" onclick="return validateAndConfirm();">
+          Mesclar Selecionadas
+        </button>
+        <%= link_to "Cancelar", celebrities_path, class: "btn" %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card">
+    <p style="text-align: center; padding: 2rem; color: #27ae60; font-size: 1.1em;">
+      ✅ Nenhuma duplicata encontrada!
+    </p>
+  </div>
+<% end %>
+
+<script>
+  // Handle source checkboxes based on group checkbox and target selection
+  document.addEventListener('DOMContentLoaded', function() {
+    const groupCheckboxes = document.querySelectorAll('.merge-group-checkbox');
+    
+    groupCheckboxes.forEach(function(checkbox) {
+      checkbox.addEventListener('change', function() {
+        const groupIndex = this.dataset.group;
+        const sourceCheckboxes = document.querySelectorAll(`input[type="checkbox"].source-checkbox[data-group="${groupIndex}"]`);
+        
+        // Enable/disable source checkboxes based on group checkbox
+        sourceCheckboxes.forEach(function(cb) {
+          cb.disabled = !checkbox.checked;
+          const label = cb.closest('div').querySelector('label[for*="source_ids"]');
+          if (label) label.style.opacity = checkbox.checked ? '1' : '0.5';
+        });
+      });
+      
+      // Trigger change on load to set initial state
+      checkbox.dispatchEvent(new Event('change'));
+    });
+    
+    // Prevent selecting a source that is also the target
+    document.querySelectorAll('.target-radio').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        const groupIndex = this.dataset.group;
+        const targetId = this.value;
+        const groupCheckbox = document.querySelector(`.merge-group-checkbox[data-group="${groupIndex}"]`);
+        const isGroupEnabled = groupCheckbox && groupCheckbox.checked;
+        
+        const sourceCheckboxes = document.querySelectorAll(`input[type="checkbox"].source-checkbox[data-group="${groupIndex}"]`);
+        
+        sourceCheckboxes.forEach(function(cb) {
+          const celebrityId = cb.dataset.celebrityId;
+          if (celebrityId == targetId) {
+            cb.checked = false;
+            cb.disabled = true;
+            const label = cb.closest('div').querySelector('label[for*="source_ids"]');
+            if (label) label.style.opacity = '0.5';
+          } else {
+            cb.disabled = !isGroupEnabled;
+            const label = cb.closest('div').querySelector('label[for*="source_ids"]');
+            if (label) label.style.opacity = isGroupEnabled ? '1' : '0.5';
+          }
+        });
+      });
+    });
+    
+    // Validate form before submit
+    function validateAndConfirm() {
+      const enabledGroups = document.querySelectorAll('.merge-group-checkbox:checked');
+      const errors = [];
+      
+      enabledGroups.forEach(function(groupCheckbox) {
+        const groupIndex = groupCheckbox.dataset.group;
+        const targetRadios = document.querySelectorAll(`input[type="radio"].target-radio[data-group="${groupIndex}"]:checked`);
+        const sourceCheckboxes = document.querySelectorAll(`input[type="checkbox"].source-checkbox[data-group="${groupIndex}"]:checked`);
+        
+        if (targetRadios.length === 0) {
+          errors.push(`Grupo ${parseInt(groupIndex) + 1}: Você deve selecionar um destino.`);
+        }
+        
+        if (sourceCheckboxes.length === 0) {
+          errors.push(`Grupo ${parseInt(groupIndex) + 1}: Você deve selecionar pelo menos uma celebridade para mesclar.`);
+        }
+      });
+      
+      if (errors.length > 0) {
+        alert('Por favor, corrija os seguintes erros:\n\n' + errors.join('\n'));
+        return false;
+      }
+      
+      return confirm('Tem certeza? As celebridades selecionadas serão mescladas e as origens serão deletadas.');
+    }
+  });
+</script>
+
+<style>
+  .duplicate-group:hover {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+  }
+</style>
+

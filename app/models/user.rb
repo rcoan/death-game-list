@@ -40,8 +40,10 @@ class User < ApplicationRecord
   end
 
   # Retorna o número de vitórias (anos em que foi campeão)
+  # Considera apenas anos que já terminaram
   def championship_wins
-    GameYear.active.ordered.pluck(:year).count do |year|
+    current_year = Date.current.year
+    GameYear.active.ordered.pluck(:year).select { |year| year < current_year }.count do |year|
       self == User.champion_of_year(year)
     end
   end
@@ -54,7 +56,11 @@ class User < ApplicationRecord
   end
 
   # Retorna o campeão de um ano específico
+  # Retorna nil se o ano ainda não terminou (ano >= ano atual)
   def self.champion_of_year(year)
+    # Não retorna campeão para anos que ainda não terminaram
+    return nil if year >= Date.current.year
+    
     game_year = GameYear.find_by(year: year)
     return nil unless game_year
     
@@ -75,9 +81,12 @@ class User < ApplicationRecord
   end
 
   # Retorna ranking de todos os campeões ordenado por vitórias e depois alfabeticamente
+  # Considera apenas anos que já terminaram (ano < ano atual)
   def self.champions_ranking
-    all_years = GameYear.active.ordered.pluck(:year)
-    champions_by_year = all_years.map { |year| [year, champion_of_year(year)] }.to_h
+    current_year = Date.current.year
+    # Filtrar apenas anos que já terminaram
+    finished_years = GameYear.active.ordered.pluck(:year).select { |year| year < current_year }
+    champions_by_year = finished_years.map { |year| [year, champion_of_year(year)] }.to_h
     
     # Contar vitórias por usuário
     wins_by_user = Hash.new(0)

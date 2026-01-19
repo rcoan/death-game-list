@@ -1,0 +1,34 @@
+<h1>Admin - Importar Listas</h1>
+
+<div class="card">
+  <%= link_to "Nova Importação", new_admin_import_path, class: "btn btn-success" %>
+</div>
+
+<div class="card">
+  <h2>Instruções</h2>
+  <p>Use esta ferramenta para importar listas de jogadores a partir de um arquivo JSON.</p>
+  <p>O arquivo JSON deve ter o seguinte formato:</p>
+  <pre>
+{
+  "year": 2026,
+  "lists": [
+    {
+      "owner": "Nome do Jogador",
+      "username": "username",
+      "celebrities": ["Celebridade 1", "Celebridade 2", ...]
+    }
+  ]
+}
+  </pre>
+  <p><strong>O que a importação faz:</strong></p>
+  <ul>
+    <li>Cria usuários que não existem (com senha aleatória)</li>
+    <li>Cria celebridades que não existem (busca case-insensitive)</li>
+    <li>Remove listas existentes do ano especificado para cada usuário</li>
+    <li>Cria novas listas com as celebridades na ordem especificada</li>
+    <li>Cria ou atualiza o GameYear se necessário</li>
+  </ul>
+</div>
+
+<%= link_to "Voltar", admin_users_path, class: "btn" %>
+

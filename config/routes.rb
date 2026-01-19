@@ -17,6 +17,10 @@ Rails.application.routes.draw do
   get "autocomplete/celebrities", to: "autocomplete#celebrities"
 
   resources :celebrities, only: [:index, :show, :new, :create, :edit, :update] do
+    collection do
+      get :find_duplicates
+      post :bulk_merge
+    end
     member do
       get :mark_deceased
       patch :update_deceased, as: :update_deceased
@@ -33,5 +37,6 @@ Rails.application.routes.draw do
       end
     end
     resources :game_years
+    resources :imports, only: [:index, :new, :create]
   end
 end

@@ -1,6 +1,10 @@
 <h1>Admin - Gerenciar Celebridades</h1>
 
 <div class="card">
+  <%= link_to "🔍 Verificar Duplicatas", find_duplicates_celebrities_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
   <h2>Todas as Celebridades</h2>
   <div class="table-wrapper">
     <table>
@@ -44,10 +48,12 @@
           </td>
           <td><%= celebrity.death_date&.strftime("%d/%m/%Y") || "-" %></td>
           <td>
-            <% unless celebrity.is_deceased? %>
-              <%= link_to "Marcar como Morto", mark_deceased_celebrity_path(celebrity), class: "btn btn-danger" %>
-            <% end %>
-            <%= link_to "Mesclar", "#", class: "btn", onclick: "showMergeForm(#{celebrity.id}); return false;" %>
+            <div class="action-buttons">
+              <% unless celebrity.is_deceased? %>
+                <%= link_to "Marcar como Morto", mark_deceased_celebrity_path(celebrity), class: "btn btn-danger" %>
+              <% end %>
+              <%= link_to "Mesclar", "#", class: "btn", onclick: "showMergeForm(#{celebrity.id}); return false;" %>
+            </div>
           </td>
         </tr>
       <% end %>
