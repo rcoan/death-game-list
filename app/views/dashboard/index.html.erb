@@ -89,6 +89,12 @@
     <div>
       <canvas id="ageDistributionChart"></canvas>
     </div>
+    <div>
+      <canvas id="uniqueNamesChart"></canvas>
+    </div>
+    <div>
+      <canvas id="nameRepetitionChart"></canvas>
+    </div>
   </div>
 </div>
 
@@ -182,6 +188,30 @@
       data: @age_distribution.values,
       backgroundColor: 'rgba(52, 152, 219, 0.8)',
       borderColor: 'rgba(52, 152, 219, 1)',
+      borderWidth: 2
+    }]
+  }.to_json) %>;
+
+  // Unique Names Chart
+  window.uniqueNamesData = <%= raw({
+    labels: ['Nomes Únicos'],
+    datasets: [{
+      label: 'Quantidade de Nomes Únicos',
+      data: [@unique_names_count],
+      backgroundColor: 'rgba(46, 204, 113, 0.8)',
+      borderColor: 'rgba(46, 204, 113, 1)',
+      borderWidth: 2
+    }]
+  }.to_json) %>;
+
+  // Name Repetition Distribution Chart
+  window.nameRepetitionData = <%= raw({
+    labels: @name_repetition_distribution.keys.map { |k| "#{k} vez#{'es' if k > 1}" },
+    datasets: [{
+      label: 'Quantidade de Nomes',
+      data: @name_repetition_distribution.values,
+      backgroundColor: 'rgba(155, 89, 182, 0.8)',
+      borderColor: 'rgba(155, 89, 182, 1)',
       borderWidth: 2
     }]
   }.to_json) %>;

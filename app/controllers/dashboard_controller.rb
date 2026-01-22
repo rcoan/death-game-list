@@ -122,6 +122,25 @@ class DashboardController < ApplicationController
                                    end
                                  }
                                  .transform_values(&:count)
+    
+    # Nomes únicos no ano (todas as celebridades nas listas do ano)
+    @unique_names_count = PlayerList.for_year(@view_year)
+                                    .joins(:celebrity)
+                                    .distinct
+                                    .count('celebrities.name')
+    
+    # Distribuição de repetições (quantas vezes cada nome aparece)
+    name_counts = PlayerList.for_year(@view_year)
+                           .joins(:celebrity)
+                           .group('celebrities.name')
+                           .count
+    
+    # Agrupar por quantidade de repetições
+    @name_repetition_distribution = name_counts.values
+                                               .group_by(&:itself)
+                                               .transform_values(&:count)
+                                               .sort
+                                               .to_h
   end
 
   private

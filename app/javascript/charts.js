@@ -220,6 +220,86 @@ function initializeCharts() {
       }
     })
   }
+
+  // Unique Names Chart
+  const uniqueNamesCanvas = document.getElementById('uniqueNamesChart')
+  if (uniqueNamesCanvas && window.uniqueNamesData) {
+    const ctx = uniqueNamesCanvas.getContext('2d')
+    new Chart(ctx, {
+      type: 'bar',
+      data: window.uniqueNamesData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Nomes Únicos no Ano',
+            font: { size: 16, weight: 'bold' }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'Total: ' + context.parsed.y + ' nomes únicos'
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
+        }
+      }
+    })
+  }
+
+  // Name Repetition Distribution Chart
+  const nameRepetitionCanvas = document.getElementById('nameRepetitionChart')
+  if (nameRepetitionCanvas && window.nameRepetitionData) {
+    const ctx = nameRepetitionCanvas.getContext('2d')
+    new Chart(ctx, {
+      type: 'bar',
+      data: window.nameRepetitionData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Distribuição de Repetições de Nomes',
+            font: { size: 16, weight: 'bold' }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ' + context.parsed.y + ' nomes'
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 },
+            title: {
+              display: true,
+              text: 'Quantidade de Nomes'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Número de Repetições'
+            }
+          }
+        }
+      }
+    })
+  }
 }
 
 function initChartsWhenReady() {
