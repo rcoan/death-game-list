@@ -141,6 +141,11 @@ class DashboardController < ApplicationController
                                                .transform_values(&:count)
                                                .sort
                                                .to_h
+    
+    # Celebridades que aparecem em mais de uma lista
+    @repeated_names = name_counts.select { |name, count| count > 1 }
+                                 .sort_by { |name, count| -count }
+                                 .map { |name, count| { name: name, count: count } }
   end
 
   private

@@ -69,6 +69,32 @@
 </div>
 
 <div class="card">
+  <h2>Nomes que Aparecem em Múltiplas Listas</h2>
+  <% if @repeated_names.any? %>
+    <div class="table-wrapper">
+      <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Quantidade de Listas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @repeated_names.each do |item| %>
+          <tr>
+            <td><%= item[:name] %></td>
+            <td><%= item[:count] %> lista<%= 's' if item[:count] > 1 %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    </div>
+  <% else %>
+    <p>Nenhum nome aparece em mais de uma lista.</p>
+  <% end %>
+</div>
+
+<div class="card">
   <h2>Gráficos</h2>
   <div id="charts-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
     <div>
